@@ -2,11 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="${relativePackage}.${activityClass}" >
+    android:padding="10dip" >
 
-    <TextView
+    <com.letv.launcher.widget.Workspace
+        android:id="@+id/workspace"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff" >
+    </com.letv.launcher.widget.Workspace>
+
+    <com.letv.launcher.widget.FocusIndicatorView
+        android:id="@+id/focus_indicator"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
