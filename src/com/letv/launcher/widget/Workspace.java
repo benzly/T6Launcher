@@ -11,6 +11,7 @@ public class Workspace extends SmoothPagedView {
 
     public Workspace(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContentIsRefreshable = false;
         setDataIsReady();
     }
 

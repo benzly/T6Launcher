@@ -1,14 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dip" >
+    android:layout_height="match_parent" >
 
     <com.letv.launcher.widget.Workspace
         android:id="@+id/workspace"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff" >
+        android:background="@drawable/pic_home_background"
+        android:paddingLeft="16dip"
+        android:paddingRight="16dip"
+        android:paddingTop="100dip" >
     </com.letv.launcher.widget.Workspace>
 
     <com.letv.launcher.widget.FocusIndicatorView

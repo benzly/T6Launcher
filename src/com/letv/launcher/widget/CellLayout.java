@@ -11,23 +11,18 @@ public class CellLayout extends ViewGroup {
     private ItemContainer mItemContainer;
 
     public CellLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public CellLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public CellLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
 
-    public CellLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         mItemContainer = new ItemContainer(context);
         addView(mItemContainer);
-        setBackgroundColor(Color.YELLOW);
-        setAlpha(0.5f);
     }
 
     @Override

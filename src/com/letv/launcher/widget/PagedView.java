@@ -2376,12 +2376,15 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
                 if (DEBUG) Log.d(TAG, "loadAssociatedPages: " + lowerPageBound + "/" + upperPageBound);
                 // First, clear any pages that should no longer be loaded
                 for (int i = 0; i < count; ++i) {
-                    Page layout = (Page) getPageAt(i);
-                    if ((i < lowerPageBound) || (i > upperPageBound)) {
-                        if (layout.getPageChildCount() > 0) {
-                            layout.removeAllViewsOnPage();
+                    View child = getPageAt(i);
+                    if (child instanceof Page) {
+                        Page layout = (Page) child;
+                        if ((i < lowerPageBound) || (i > upperPageBound)) {
+                            if (layout.getPageChildCount() > 0) {
+                                layout.removeAllViewsOnPage();
+                            }
+                            mDirtyPageContent.set(i, true);
                         }
-                        mDirtyPageContent.set(i, true);
                     }
                 }
                 // Next, load any new pages
