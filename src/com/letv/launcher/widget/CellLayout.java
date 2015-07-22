@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 public class CellLayout extends ViewGroup {
 
@@ -20,7 +21,6 @@ public class CellLayout extends ViewGroup {
 
     public CellLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         mItemContainer = new ItemContainer(context);
         addView(mItemContainer);
     }
@@ -35,6 +35,14 @@ public class CellLayout extends ViewGroup {
             View child = getChildAt(i);
             child.layout(left, top, left + r - l, top + b - t);
         }
+    }
+
+    public void setIndex(int i) {
+        mItemContainer.index = i;
+    }
+
+    public void addChild(View child) {
+        mItemContainer.addView(child);
     }
 
 }

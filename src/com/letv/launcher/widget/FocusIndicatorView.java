@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.Toast;
 
+import com.example.t6launcher.R;
 import com.letv.launcher.utils.LauncherAnimUtils;
 
 public class FocusIndicatorView extends View implements View.OnFocusChangeListener {
@@ -56,7 +57,8 @@ public class FocusIndicatorView extends View implements View.OnFocusChangeListen
     public FocusIndicatorView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setAlpha(0);
-        setBackgroundColor(Color.parseColor("#889900"));
+        // setBackgroundColor(Color.parseColor("#889900"));
+        setBackgroundResource(R.drawable.focus_bg);
     }
 
     @Override

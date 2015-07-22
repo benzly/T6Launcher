@@ -7,7 +7,7 @@
         android:id="@+id/workspace"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/pic_home_background"
+        android:background="@drawable/workspace_bg"
         android:paddingLeft="16dip"
         android:paddingRight="16dip"
         android:paddingTop="100dip" >
