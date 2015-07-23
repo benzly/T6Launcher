@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.letv.launcher.drawer.AppIconDrawer xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="352px"
+    android:layout_height="220px"
+    android:layout_gravity="center" >
+
+</com.letv.launcher.drawer.AppIconDrawer>
