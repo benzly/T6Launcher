@@ -56,9 +56,9 @@ public class AppIconDrawer extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         isReadly = w > 0 && h > 0;
-        mDrawRectF.set(0, 0, w, h);
+        mDrawRectF.set(10, 10, w - 10, h - 10);
         if (mBackgroundBitmap == null || mBackgroundBitmap.getWidth() != w || mBackgroundBitmap.getHeight() != h) {
-            mBackgroundBitmap = BitmapUtil.compressBitmapFromResourse(getContext(), R.drawable.item_bg, w - 20, h - 20);
+            mBackgroundBitmap = BitmapUtil.compressBitmapFromResourse(getContext(), R.drawable.item_bg, w - 0, h - 0);
             mShadowBitmap = mBackgroundBitmap.extractAlpha();
         }
         if (mIconBitmap == null) {
@@ -75,27 +75,28 @@ public class AppIconDrawer extends View {
         // canvas background
         canvas.drawColor(Color.WHITE);
 
+        // icon shadow
+        canvas.drawBitmap(mShadowBitmap, 0, 0, mShadowPaint);
+
         // cut round canvas
         mPaint.setAntiAlias(true);
         mPath.addRoundRect(mDrawRectF, mFilletRadius, mFilletRadius, Direction.CCW);
         canvas.clipPath(mPath);
         mPath.reset();
 
-        // icon shadow
-        canvas.drawBitmap(mShadowBitmap, 10, -10, mShadowPaint);
-
         // icon background
-        canvas.drawBitmap(mBackgroundBitmap, 10, -10, mPaint);
+        canvas.drawBitmap(mBackgroundBitmap, 10, 10, mPaint);
 
         // icon
-        canvas.drawBitmap(mIconBitmap, getWidth() / 2 - mIconBitmap.getWidth() / 2, getHeight() / 2 - mIconBitmap.getHeight() / 2, mPaint);
+        // canvas.drawBitmap(mIconBitmap, getWidth() / 2 - mIconBitmap.getWidth() / 2, getHeight() /
+        // 2 - mIconBitmap.getHeight() / 2, mPaint);
 
         // label background
         mPath.moveTo(0, 40);
         mPath.lineTo(0, 80);
         mPath.lineTo(80, 0);
         mPath.lineTo(40, 0);
-        mPaint.setColor(Color.RED);
+        mPaint.setColor(Color.GREEN);
         canvas.drawPath(mPath, mPaint);
 
         // label text
