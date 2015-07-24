@@ -90,7 +90,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
     private static final float OVERSCROLL_DAMP_FACTOR = 0.07f;
 
     private static final float RETURN_TO_ORIGINAL_PAGE_THRESHOLD = 0.33f;
-    // The page is moved more than halfway, automatically move to the next page on touch up.
+    // The page is moved more than halfway, automatically requestfocus to the next page on touch up.
     private static final float SIGNIFICANT_MOVE_THRESHOLD = 0.4f;
 
     // The following constants need to be scaled based on density. The scaled versions will be
@@ -1402,7 +1402,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
                     determineScrollingStart(ev);
                 }
                 // if mActivePointerId is INVALID_POINTER, then we must have missed an ACTION_DOWN
-                // event. in that case, treat the first occurence of a move event as a ACTION_DOWN
+                // event. in that case, treat the first occurence of a requestfocus event as a ACTION_DOWN
                 // i.e. fall through to the next case (don't break)
                 // (We sometimes miss ACTION_DOWN events in Workspace because it ignores all events
                 // while it's small- this was causing a crash before we checked for INVALID_POINTER)
@@ -1913,8 +1913,8 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
                         int finalPage;
                         // We give flings precedence over large moves, which is why we short-circuit
                         // our
-                        // test for a large move if a fling has been registered. That is, a large
-                        // move to the left and fling to the right will register as a fling to the
+                        // test for a large requestfocus if a fling has been registered. That is, a large
+                        // requestfocus to the left and fling to the right will register as a fling to the
                         // right.
                         final boolean isRtl = isLayoutRtl();
                         boolean isDeltaXLeft = isRtl ? deltaX > 0 : deltaX < 0;

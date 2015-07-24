@@ -473,7 +473,7 @@ public class LauncherScroller {
 
     /**
      * Stops the animation. Contrary to {@link #forceFinished(boolean)}, aborting the animating
-     * cause the scroller to move to the final x and y position
+     * cause the scroller to requestfocus to the final x and y position
      *
      * @see #forceFinished(boolean)
      */

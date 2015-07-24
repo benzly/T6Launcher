@@ -1,4 +1,3 @@
-
 package com.letv.launcher.utils;
 
 import android.content.Context;
@@ -79,8 +78,7 @@ public class BitmapUtil {
      * @return Drawable 转换后的Drawable对象 或者null
      */
     public static Drawable bitmapToDrawable(Bitmap bitmap) {
-        if (bitmap == null)
-            return null;
+        if (bitmap == null) return null;
         if (160 != bitmap.getDensity()) {
             bitmap.setDensity(160);
         }
@@ -91,7 +89,7 @@ public class BitmapUtil {
      * 根据图片资源ID获取Drawable对象
      *
      * @param context 上下文
-     * @param id      图片的资源ID
+     * @param id 图片的资源ID
      * @return Drawable对象
      */
     public static Drawable resourceToDrawable(Context context, int id) {
@@ -124,8 +122,7 @@ public class BitmapUtil {
         int h = drawable.getIntrinsicHeight();
 
         // 取 drawable 的颜色格式
-        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
-                : Bitmap.Config.RGB_565;
+        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565;
         // 建立对应 bitmap
         Bitmap bitmap = Bitmap.createBitmap(w, h, config);
         // 建立对应 bitmap 的画布
@@ -171,7 +168,7 @@ public class BitmapUtil {
     /**
      * 图片缩放
      *
-     * @param url         图片的路径
+     * @param url 图片的路径
      * @param requireSize 缩放的尺寸
      * @return 缩放后的图片Bitmap对象
      */
@@ -183,8 +180,7 @@ public class BitmapUtil {
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
         while (true) {
-            if (width_tmp / 2 < requireSize || height_tmp / 2 < requireSize)
-                break;
+            if (width_tmp / 2 < requireSize || height_tmp / 2 < requireSize) break;
             width_tmp /= 2;
             height_tmp /= 2;
             scale *= 2;
@@ -199,7 +195,7 @@ public class BitmapUtil {
      * 图片缩放
      *
      * @param bitmap 原图
-     * @param width  目标宽度
+     * @param width 目标宽度
      * @param height 目标高度
      * @return 缩放后的图片Bitmap对象
      */
@@ -235,15 +231,14 @@ public class BitmapUtil {
         // 设置缩放比例
         matrix.postScale(sx, sy);
         // 建立新的bitmap，其内容是对原bitmap的缩放后的图
-        Bitmap newbmp = Bitmap.createBitmap(oldbmp, 0, 0, width, height,
-                matrix, true);
+        Bitmap newbmp = Bitmap.createBitmap(oldbmp, 0, 0, width, height, matrix, true);
         return new BitmapDrawable(newbmp);
     }
 
     /**
      * 获得圆角图片
      *
-     * @param bitmap  原图
+     * @param bitmap 原图
      * @param roundPx 角度
      * @return
      */
@@ -281,11 +276,13 @@ public class BitmapUtil {
         final int color = 0xff424242;
         final Paint paint = new Paint();
         /**
-         * 截取图像的中心的一个正方形,用于在原图中截取 坐标如下： icon1.如果 w < h , 左上坐标(0, (h-w)/icon2) , 右上坐标(w,
-         * (h+w)/icon2) 偏移10 icon2.如果 w > h , 左上坐标((w-h)/icon2, 0) , 右上坐标((w+h)/icon2, h) 偏移10
+         * 截取图像的中心的一个正方形,用于在原图中截取 坐标如下： icon1.如果 w < h , 左上坐标(0, (h-w)/icon2) , 右上坐标(w, (h+w)/icon2)
+         * 偏移10 icon2.如果 w > h , 左上坐标((w-h)/icon2, 0) , 右上坐标((w+h)/icon2, h) 偏移10
          */
-        final Rect rect = new Rect(width < height ? 0 : (width - height) / 2, width < height ? (height - width) / 2 - 10 : -10,
-                width < height ? width : (width + height) / 2, (width < height ? (height + width) / 2 - 10 : height - 10));
+        final Rect rect =
+                new Rect(width < height ? 0 : (width - height) / 2, width < height ? (height - width) / 2 - 10 : -10, width < height
+                        ? width
+                        : (width + height) / 2, (width < height ? (height + width) / 2 - 10 : height - 10));
         // 创建一个直径大小的正方形，用于设置canvas的显示与设置画布截取
         final Rect rect2 = new Rect(0, 0, r * 2, r * 2);
         // 提高精度，用于消除锯齿
@@ -317,11 +314,9 @@ public class BitmapUtil {
         Matrix matrix = new Matrix();
         matrix.preScale(1, -1);
 
-        Bitmap reflectionImage = Bitmap.createBitmap(bitmap, 0, h / 2, w,
-                h / 2, matrix, false);
+        Bitmap reflectionImage = Bitmap.createBitmap(bitmap, 0, h / 2, w, h / 2, matrix, false);
 
-        Bitmap bitmapWithReflection = Bitmap.createBitmap(w, (h + h / 2),
-                Config.ARGB_8888);
+        Bitmap bitmapWithReflection = Bitmap.createBitmap(w, (h + h / 2), Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmapWithReflection);
         canvas.drawBitmap(bitmap, 0, 0, null);
@@ -331,15 +326,14 @@ public class BitmapUtil {
         canvas.drawBitmap(reflectionImage, 0, h + reflectionGap, null);
 
         Paint paint = new Paint();
-        LinearGradient shader = new LinearGradient(0, bitmap.getHeight(), 0,
-                bitmapWithReflection.getHeight() + reflectionGap, 0x70ffffff,
-                0x00ffffff, TileMode.CLAMP);
+        LinearGradient shader =
+                new LinearGradient(0, bitmap.getHeight(), 0, bitmapWithReflection.getHeight() + reflectionGap, 0x70ffffff, 0x00ffffff,
+                        TileMode.CLAMP);
         paint.setShader(shader);
         // Set the Transfer mode to be porter duff and destination in
         paint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
         // Draw a rectangle using the paint with our linear gradient
-        canvas.drawRect(0, h, w, bitmapWithReflection.getHeight()
-                + reflectionGap, paint);
+        canvas.drawRect(0, h, w, bitmapWithReflection.getHeight() + reflectionGap, paint);
 
         return bitmapWithReflection;
     }
@@ -382,7 +376,7 @@ public class BitmapUtil {
      * 保存图片到SDCard
      *
      * @param imagePath 图片保存路径
-     * @param bm        被保存的bitmap对象
+     * @param bm 被保存的bitmap对象
      */
     public static void saveImgToLocal(String imagePath, Bitmap bm) {
         if (bm == null || imagePath == null || "".equals(imagePath)) {
@@ -431,17 +425,17 @@ public class BitmapUtil {
     /**
      * 对图片进行压缩，主要是为了解决控件显示过大图片占用内存造成OOM问题,一般压缩后的图片大小应该和用来展示它的控件大小相近.
      *
-     * @param context   上下文
-     * @param resId     图片资源Id
-     * @param reqWidth  期望压缩的宽度
+     * @param context 上下文
+     * @param resId 图片资源Id
+     * @param reqWidth 期望压缩的宽度
      * @param reqHeight 期望压缩的高度
+     * @param realSize 是否按要求的宽高进行图片缩放
      * @return 压缩后的图片
      */
-    public static Bitmap compressBitmapFromResourse(Context context, int resId, int reqWidth, int reqHeight) {
+    public static Bitmap compressBitmapFromResourse(Context context, int resId, int reqWidth, int reqHeight, boolean realSize) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         /*
-         * 第一次解析时，inJustDecodeBounds设置为true，
-         * 禁止为bitmap分配内存，虽然bitmap返回值为空，但可以获取图片大小
+         * 第一次解析时，inJustDecodeBounds设置为true， 禁止为bitmap分配内存，虽然bitmap返回值为空，但可以获取图片大小
          */
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeResource(context.getResources(), resId, options);
@@ -449,7 +443,8 @@ public class BitmapUtil {
         final int height = options.outHeight;
         final int width = options.outWidth;
         final int density = options.inDensity;
-        Log.d(TAG, " compressBitmapFromResourse height = " + height + " width = " + width + " density = " + density + " " + context.getResources().getDisplayMetrics().toString());
+        Log.d(TAG, " compressBitmapFromResourse height = " + height + " width = " + width + " density = " + density + " "
+                + context.getResources().getDisplayMetrics().toString());
         int inSampleSize = 1;
         if (height > reqHeight || width > reqWidth) {
             final int heightRatio = Math.round((float) height / (float) reqHeight);
@@ -459,8 +454,15 @@ public class BitmapUtil {
         options.inSampleSize = inSampleSize;
         // 使用计算得到的inSampleSize值再次解析图片
         options.inJustDecodeBounds = false;
-        options.inDensity = (int) (context.getResources().getDisplayMetrics().density*160);
-        return BitmapFactory.decodeResource(context.getResources(), resId, options);
+        options.inDensity = (int) (context.getResources().getDisplayMetrics().density * 160);
+
+        Bitmap ret = BitmapFactory.decodeResource(context.getResources(), resId, options);
+        if (realSize && (width != reqWidth || height != reqHeight)) {
+            Bitmap newRet = zoomBitmap(ret, reqWidth, reqHeight);
+            return newRet;
+        } else {
+            return ret;
+        }
     }
 
     /**
@@ -536,17 +538,14 @@ public class BitmapUtil {
         int bitmap_h = height - bottom - top;
         int[] pixels = new int[bitmap_w * bitmap_h];
         bitmap.getPixels(pixels, 0, bitmap_w, left, top, bitmap_w, bitmap_h);
-        bitmap = Bitmap.createBitmap(pixels, 0, bitmap_w, bitmap_w, bitmap_h,
-                Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(pixels, 0, bitmap_w, bitmap_w, bitmap_h, Bitmap.Config.ARGB_8888);
         long endTime = SystemClock.uptimeMillis();
         Log.d(TAG, " getPixelAreaOfBitmap_ use time = " + (endTime - beginTime));
         Log.d(TAG, "----");
         return bitmap;
     }
 
-    static int sColors[] = {
-            0xffff0000, 0xff00ff00, 0xff0000ff
-    };
+    static int sColors[] = {0xffff0000, 0xff00ff00, 0xff0000ff};
     static int sColorIndex = 0;
 
     /**
@@ -586,8 +585,7 @@ public class BitmapUtil {
         int textureWidth = rect;
         int textureHeight = rect;
 
-        final Bitmap bitmap = Bitmap.createBitmap(textureWidth, textureHeight,
-                Bitmap.Config.ARGB_8888);
+        final Bitmap bitmap = Bitmap.createBitmap(textureWidth, textureHeight, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas();
 
         canvas.setBitmap(bitmap);
@@ -598,12 +596,10 @@ public class BitmapUtil {
         // suppress dead code warning
         final boolean debug = false;
         if (debug) {
-            canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG,
-                    Paint.FILTER_BITMAP_FLAG));
+            canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG, Paint.FILTER_BITMAP_FLAG));
             // draw a big box for the icon for debugging
             canvas.drawColor(sColors[sColorIndex]);
-            if (++sColorIndex >= sColors.length)
-                sColorIndex = 0;
+            if (++sColorIndex >= sColors.length) sColorIndex = 0;
             Paint debugPaint = new Paint();
             debugPaint.setColor(0xffcccc00);
             canvas.drawRect(left, top, left + width, top + height, debugPaint);
@@ -689,8 +685,7 @@ public class BitmapUtil {
         int bitmap_h = height - bottom - top;
         int[] pixels = new int[bitmap_w * bitmap_h];
         bitmap.getPixels(pixels, 0, bitmap_w, left, top, bitmap_w, bitmap_h);
-        bitmap = Bitmap.createBitmap(pixels, 0, bitmap_w, bitmap_w, bitmap_h,
-                Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(pixels, 0, bitmap_w, bitmap_w, bitmap_h, Bitmap.Config.ARGB_8888);
         long endTime = SystemClock.uptimeMillis();
         Log.d(TAG, " getPixelAreaOfBitmap use time = " + (endTime - beginTime));
         Log.d(TAG, "----");
@@ -724,8 +719,8 @@ public class BitmapUtil {
                 height = sourceHeight;
                 width = (int) (height * ratio);
             }
-//            width -= (int) (width * scaleRate);
-//            height -= (int) (height * scaleRate);
+            // width -= (int) (width * scaleRate);
+            // height -= (int) (height * scaleRate);
         } else {
             width += (int) (width * scaleRate);
             height += (int) (height * scaleRate);
@@ -752,13 +747,13 @@ public class BitmapUtil {
 
     }
 
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
-        Log.d(TAG, " calculateInSampleSize height = " + height + " width = " + width + " reqWidth = " + reqWidth + " reqHeight = " + reqHeight);
+        Log.d(TAG, " calculateInSampleSize height = " + height + " width = " + width + " reqWidth = " + reqWidth + " reqHeight = "
+                + reqHeight);
 
         if (height > reqHeight || width > reqWidth) {
 
@@ -767,16 +762,14 @@ public class BitmapUtil {
 
             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
             // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
+            while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
                 inSampleSize *= 2;
             }
         }
         return inSampleSize;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;

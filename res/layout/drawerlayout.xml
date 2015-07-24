@@ -1,7 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.letv.launcher.drawer.AppIconDrawer xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="540px"
-    android:layout_height="337px"
-    android:layout_gravity="center" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-</com.letv.launcher.drawer.AppIconDrawer>
+    <com.letv.launcher.drawer.AppIconDrawer
+        android:id="@+id/drawer"
+        android:layout_width="500px"
+        android:layout_height="300px"
+        android:layout_centerInParent="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/trun_big"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="trunbig" />
+
+        <Button
+            android:id="@+id/uninstall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="uninstall" />
+
+        <Button
+            android:id="@+id/move"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="move" />
+
+        <Button
+            android:id="@+id/refresh_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="refresh" />
+    </LinearLayout>
+
+    <com.letv.launcher.widget.FocusIndicatorView
+        android:id="@+id/focus_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
