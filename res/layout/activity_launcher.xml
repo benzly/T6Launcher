@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.letv.launcher.widget.Workspace
+    <com.stv.launcher.widget.Workspace
         android:id="@+id/workspace"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -11,9 +11,9 @@
         android:paddingLeft="16dip"
         android:paddingRight="16dip"
         android:paddingTop="100dip" >
-    </com.letv.launcher.widget.Workspace>
+    </com.stv.launcher.widget.Workspace>
 
-    <com.letv.launcher.widget.FocusIndicatorView
+    <com.stv.launcher.widget.FocusIndicatorView
         android:id="@+id/focus_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launcher>
+    <screen>
+        <screenId>0</screenId>
+        <tabName>轮播</tabName>
+        <spanXSize>0</spanXSize>
+        <spanYSize>0</spanYSize>
+    </screen>
+
+    <screen>
+        <screenId>1</screenId>
+        <tabName>视频</tabName>
+        <spanXSize>6</spanXSize>
+        <spanYSize>3</spanYSize>
+        <model>
+            <position>0</position>
+            <title>test_vod</title>
+        </model>
+    </screen>
+
+    <screen>
+        <screenId>2</screenId>
+        <tabName>搜索</tabName>
+        <spanXSize>6</spanXSize>
+        <spanYSize>3</spanYSize>
+        <model>
+            <position>0</position>
+            <title>test_search</title>
+        </model>
+    </screen>
+
+    <screen>
+        <screenId>3</screenId>
+        <tabName>应用</tabName>
+        <spanXSize>6</spanXSize>
+        <spanYSize>3</spanYSize>
+        <model>
+            <position>0</position>
+            <title>test_app0</title>
+        </model>
+        <model>
+            <position>1</position>
+            <title>test_app1</title>
+        </model>
+    </screen>
+</launcher>

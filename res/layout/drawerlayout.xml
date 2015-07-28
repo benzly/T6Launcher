@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.letv.launcher.drawer.AppIconDrawer
+    <com.stv.launcher.widget.AppIconDrawer
         android:id="@+id/drawer"
         android:layout_width="500px"
         android:layout_height="300px"
@@ -40,7 +40,7 @@
             android:text="refresh" />
     </LinearLayout>
 
-    <com.letv.launcher.widget.FocusIndicatorView
+    <com.stv.launcher.widget.FocusIndicatorView
         android:id="@+id/focus_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

@@ -9,16 +9,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
-import com.example.t6launcher.R;
-import com.letv.launcher.widget.CellLayout;
-import com.letv.launcher.widget.FocusIndicatorView;
-import com.letv.launcher.widget.Workspace;
+import com.stv.launcher.widget.CellLayout;
+import com.stv.launcher.widget.FocusIndicatorView;
+import com.stv.launcher.widget.Workspace;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Launcher extends Activity {
+public class Launcher extends Activity implements LauncherModel.Callbacks {
 
+    public static final String TAG = Launcher.class.getSimpleName();
+
+    public static final int SCREEN_COUNT = 5;
     private Workspace mWorkspace;
     private FocusIndicatorView mFocusIndicatorView;
 
