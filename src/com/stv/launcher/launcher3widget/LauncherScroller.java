@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.stv.launcher.widget;
+package com.stv.launcher.launcher3widget;
 
 import android.animation.TimeInterpolator;
 import android.content.Context;

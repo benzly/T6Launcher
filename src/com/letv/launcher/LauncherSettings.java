@@ -123,7 +123,7 @@ public class LauncherSettings {
         /**
          * The content:// style URL for this table
          */
-        static final Uri CONTENT_URI = null;
+        static final Uri CONTENT_URI = Uri.parse("test");
 
         /**
          * The rank of this screen -- ie. how it is ordered relative to the other screens.

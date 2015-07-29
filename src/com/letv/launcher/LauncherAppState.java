@@ -23,7 +23,6 @@ import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.provider.LauncherProvider;
 import com.stv.launcher.utils.AppFilter;
 import com.stv.launcher.utils.BuildInfo;
-import com.stv.launcher.utils.DynamicGrid;
 import com.stv.launcher.utils.IconCache;
 import com.stv.launcher.utils.LauncherFiles;
 import com.stv.launcher.utils.Utilities;
@@ -100,9 +99,10 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
         filter.addAction(SearchManager.INTENT_ACTION_SEARCHABLES_CHANGED);
         sContext.registerReceiver(mModel, filter);
 
-        // Register for changes to the favorites
+
         ContentResolver resolver = sContext.getContentResolver();
-        resolver.registerContentObserver(LauncherSettings.Favorites.CONTENT_URI, true, mFavoritesObserver);
+        // TODO
+        //resolver.registerContentObserver(LauncherSettings.Favorites.CONTENT_URI, true, mFavoritesObserver);
     }
 
     /**

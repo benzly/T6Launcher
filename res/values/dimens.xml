@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Tabspace -->
+    <dimen name="tabspace_height">100dip</dimen>
+    <dimen name="tabspace_margin_top">50dip</dimen>
+    <dimen name="tabspace_padding_horizontal_edge">30dip</dimen>
+
+</resources>

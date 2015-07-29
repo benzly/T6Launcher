@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
+import com.letv.launcher.LauncherAppState;
+
 import org.xmlpull.v1.XmlPullParser;
 
 public class LauncherProvider extends ContentProvider {
@@ -14,6 +16,7 @@ public class LauncherProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        LauncherAppState.setLauncherProvider(this);
         loadDefaultWorkspace();
         return true;
     }

@@ -16,6 +16,7 @@ package com.stv.launcher.widget;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -26,7 +27,8 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.Toast;
 
-import com.example.t6launcher.R;
+import com.letv.launcher.R;
+import com.stv.launcher.launcher3widget.PagedView;
 import com.stv.launcher.utils.LauncherAnimUtils;
 
 public class FocusIndicatorView extends View implements View.OnFocusChangeListener {
@@ -73,6 +75,7 @@ public class FocusIndicatorView extends View implements View.OnFocusChangeListen
         }
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         mPendingCall = null;

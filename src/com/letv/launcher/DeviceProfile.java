@@ -14,33 +14,15 @@
 
 package com.letv.launcher;
 
-import android.appwidget.AppWidgetHostView;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Paint.FontMetrics;
-import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.Gravity;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-import android.view.ViewGroup.MarginLayoutParams;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-
-import com.stv.launcher.utils.DynamicGrid;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 
 class DeviceProfileQuery {
@@ -98,7 +80,7 @@ public class DeviceProfile {
     float overviewModeIconZoneRatio;
     float overviewModeScaleFactor;
 
-    int iconSizePx;
+    public int iconSizePx;
     int iconTextSizePx;
     int iconDrawablePaddingPx;
     int cellWidthPx;
@@ -156,7 +138,7 @@ public class DeviceProfile {
         DisplayMetrics dm = res.getDisplayMetrics();
         // TODO
         // 加载一些默认数据
-
+        iconSizePx = 200;
     }
 
 

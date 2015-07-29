@@ -22,7 +22,7 @@ import android.util.Log;
 
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
-import com.stv.launcher.widget.Workspace;
+import com.stv.launcher.launcher3widget.Workspace;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

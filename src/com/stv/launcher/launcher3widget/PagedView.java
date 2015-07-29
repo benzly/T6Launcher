@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.stv.launcher.widget;
+package com.stv.launcher.launcher3widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -21,6 +21,7 @@ import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -714,6 +715,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         }
     }
 
+    @SuppressLint("NewApi")
     private void sendScrollAccessibilityEvent() {
         AccessibilityManager am = (AccessibilityManager) getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
         if (am.isEnabled()) {
@@ -735,6 +737,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
     }
 
     // we moved this functionality to a helper function so SmoothPagedView can reuse it
+    @SuppressLint("NewApi")
     protected boolean computeScrollHelper() {
         if (mScroller.computeScrollOffset()) {
             // Don't bother scrolling if the page does not need to be moved
@@ -1402,7 +1405,8 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
                     determineScrollingStart(ev);
                 }
                 // if mActivePointerId is INVALID_POINTER, then we must have missed an ACTION_DOWN
-                // event. in that case, treat the first occurence of a requestfocus event as a ACTION_DOWN
+                // event. in that case, treat the first occurence of a requestfocus event as a
+                // ACTION_DOWN
                 // i.e. fall through to the next case (don't break)
                 // (We sometimes miss ACTION_DOWN events in Workspace because it ignores all events
                 // while it's small- this was causing a crash before we checked for INVALID_POINTER)
@@ -1913,8 +1917,10 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
                         int finalPage;
                         // We give flings precedence over large moves, which is why we short-circuit
                         // our
-                        // test for a large requestfocus if a fling has been registered. That is, a large
-                        // requestfocus to the left and fling to the right will register as a fling to the
+                        // test for a large requestfocus if a fling has been registered. That is, a
+                        // large
+                        // requestfocus to the left and fling to the right will register as a fling
+                        // to the
                         // right.
                         final boolean isRtl = isLayoutRtl();
                         boolean isDeltaXLeft = isRtl ? deltaX > 0 : deltaX < 0;
@@ -2042,6 +2048,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         ((Launcher) getContext()).onClick(this);
     }
 
+    @SuppressLint("NewApi")
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {
@@ -2514,6 +2521,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         mIsReordering = false;
     }
 
+    @SuppressLint("NewApi")
     public boolean startReordering(View v) {
         int dragViewIndex = indexOfChild(v);
 
@@ -2824,6 +2832,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
     }
 
     /* Accessibility */
+    @SuppressLint("NewApi")
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
@@ -2844,12 +2853,14 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         }
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
         super.onInitializeAccessibilityEvent(event);
         event.setScrollable(true);
     }
 
+    @SuppressLint("NewApi")
     @Override
     public boolean performAccessibilityAction(int action, Bundle arguments) {
         if (super.performAccessibilityAction(action, arguments)) {

@@ -11,12 +11,11 @@ import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.Shader;
 import android.graphics.Paint.Align;
-import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.example.t6launcher.R;
+import com.letv.launcher.R;
 import com.stv.launcher.utils.BitmapUtil;
 
 public class AppIconDrawer extends View {

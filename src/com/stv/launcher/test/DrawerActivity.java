@@ -10,7 +10,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 
-import com.example.t6launcher.R;
+import com.letv.launcher.R;
 import com.stv.launcher.widget.AppIconDrawer;
 import com.stv.launcher.widget.FocusIndicatorView;
 

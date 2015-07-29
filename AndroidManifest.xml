@@ -9,10 +9,11 @@
         android:targetSdkVersion="21" />
 
     <application
+        android:name="com.letv.launcher.LauncherApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:hardwareAccelerated="true"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
         <activity
             android:name="com.letv.launcher.Launcher"
@@ -23,6 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="com.stv.launcher.provider.LauncherProvider"
+            android:authorities="com.letv.launcher.settings"
+            android:exported="true"
+            android:readPermission="com.letv.launcher.permission.READ_SETTINGS"
+            android:writePermission="com.letv.launcher.permission.WRITE_SETTINGS" >
+        </provider>
     </application>
 
 </manifest>

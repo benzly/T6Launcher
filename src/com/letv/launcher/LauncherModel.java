@@ -40,11 +40,11 @@ import com.stv.launcher.compat.PackageInstallerCompat;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
+import com.stv.launcher.launcher3widget.PagedView;
 import com.stv.launcher.utils.AppFilter;
 import com.stv.launcher.utils.DeferredHandler;
 import com.stv.launcher.utils.IconCache;
 import com.stv.launcher.utils.Utilities;
-import com.stv.launcher.widget.PagedView;
 
 import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
@@ -69,7 +69,7 @@ import java.util.TreeMap;
  * Launcher.
  */
 public class LauncherModel extends BroadcastReceiver implements LauncherAppsCompat.OnAppsChangedCallbackCompat {
-    static final boolean DEBUG_LOADERS = false;
+    static final boolean DEBUG_LOADERS = true;
     private static final boolean DEBUG_RECEIVER = false;
     private static final boolean REMOVE_UNRESTORED_ICONS = true;
     private static final boolean ADD_MANAGED_PROFILE_SHORTCUTS = false;
@@ -149,7 +149,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     static final HashMap<Object, byte[]> sBgDbIconCache = new HashMap<Object, byte[]>();
 
     // sBgWorkspaceScreens is the ordered set of workspace screens.
-    static final ArrayList<Long> sBgWorkspaceScreens = new ArrayList<Long>();
+    static final HashMap<Long, String> sBgWorkspaceScreens = new HashMap<Long, String>();
 
     // sPendingPackages is a set of packages which could be on sdcard and are not available yet
     static final HashMap<UserHandleCompat, HashSet<String>> sPendingPackages = new HashMap<UserHandleCompat, HashSet<String>>();
@@ -162,17 +162,15 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     private final UserManagerCompat mUserManager;
 
     public interface Callbacks {
-        public boolean setLoadOnResume();
-
-        public int getCurrentWorkspaceScreen();
-
         public void startBinding();
 
-        public void bindScreens(HashMap<Integer, String> orderedScreenIds);
+        public void bindScreens(HashMap<Long, String> orderedScreenIds);
 
         public void bindItems(int screenId, ArrayList<ItemInfo> items);
 
         public void finishBindingItems(boolean upgradePath);
+
+        public void bindAllApplications(ArrayList<AppInfo> apps);
 
         public void bindAppsAdded(ArrayList<Long> newScreens, ArrayList<ItemInfo> addNotAnimated, ArrayList<ItemInfo> addAnimated,
                 ArrayList<AppInfo> addedApps);
@@ -189,15 +187,17 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
         public void updatePackageBadge(String packageName);
 
+        public int getCurrentWorkspaceScreen();
 
+        public boolean setLoadOnResume();
 
         void bindSearchablesChanged();
-
-        boolean isAllAppsButtonRank(int rank);
 
         void onPageBoundSynchronously(int page);
 
         void dumpLogsToLocalData();
+
+        boolean isAllAppsButtonRank(int rank);
     }
 
     public interface ItemInfoFilter {
@@ -279,32 +279,33 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     }
 
     static Pair<Long, int[]> findNextAvailableIconSpace(Context context, String name, Intent launchIntent, int firstScreenIndex,
-            ArrayList<Long> workspaceScreens) {
+            HashMap<Long, String> workspaceScreens) {
         // Lock on the app so that we don't try and get the items while apps are being added
-        LauncherAppState app = LauncherAppState.getInstance();
-        LauncherModel model = app.getModel();
-        boolean found = false;
-        synchronized (app) {
-            if (sWorkerThread.getThreadId() != Process.myTid()) {
-                // Flush the LauncherModel worker thread, so that if we just did another
-                // processInstallShortcut, we give it time for its shortcut to get added to the
-                // database (getItemsInLocalCoordinates reads the database)
-                model.flushWorkerThread();
-            }
-            final ArrayList<ItemInfo> items = LauncherModel.getItemsInLocalCoordinates(context);
-
-            // Try adding to the workspace screens incrementally, starting at the default or center
-            // screen and alternating between +1, -1, +2, -2, etc. (using ~ ceil(i/2f)*(-1)^(i-1))
-            firstScreenIndex = Math.min(firstScreenIndex, workspaceScreens.size());
-            int count = workspaceScreens.size();
-            for (int screen = firstScreenIndex; screen < count && !found; screen++) {
-                int[] tmpCoordinates = new int[2];
-                if (findNextAvailableIconSpaceInScreen(items, tmpCoordinates, workspaceScreens.get(screen))) {
-                    // Update the Launcher db
-                    return new Pair<Long, int[]>(workspaceScreens.get(screen), tmpCoordinates);
-                }
-            }
-        }
+        // LauncherAppState app = LauncherAppState.getInstance();
+        // LauncherModel model = app.getModel();
+        // boolean found = false;
+        // synchronized (app) {
+        // if (sWorkerThread.getThreadId() != Process.myTid()) {
+        // // Flush the LauncherModel worker thread, so that if we just did another
+        // // processInstallShortcut, we give it time for its shortcut to get added to the
+        // // database (getItemsInLocalCoordinates reads the database)
+        // model.flushWorkerThread();
+        // }
+        // final ArrayList<ItemInfo> items = LauncherModel.getItemsInLocalCoordinates(context);
+        //
+        // // Try adding to the workspace screens incrementally, starting at the default or center
+        // // screen and alternating between +1, -1, +2, -2, etc. (using ~ ceil(i/2f)*(-1)^(i-1))
+        // firstScreenIndex = Math.min(firstScreenIndex, workspaceScreens.size());
+        // int count = workspaceScreens.size();
+        // for (int screen = firstScreenIndex; screen < count && !found; screen++) {
+        // int[] tmpCoordinates = new int[2];
+        // if (findNextAvailableIconSpaceInScreen(items, tmpCoordinates,
+        // workspaceScreens.get(screen))) {
+        // // Update the Launcher db
+        // return new Pair<Long, int[]>(workspaceScreens.get(screen), tmpCoordinates);
+        // }
+        // }
+        // }
         return null;
     }
 
@@ -378,11 +379,10 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 // Get the list of workspace screens. We need to append to this list and
                 // can not use sBgWorkspaceScreens because loadWorkspace() may not have been
                 // called.
-                ArrayList<Long> workspaceScreens = new ArrayList<Long>();
-                TreeMap<Integer, Long> orderedScreens = loadWorkspaceScreensDb(context);
-                for (Integer i : orderedScreens.keySet()) {
-                    long screenId = orderedScreens.get(i);
-                    workspaceScreens.add(screenId);
+                HashMap<Long, String> workspaceScreens = new HashMap<Long, String>();
+                HashMap<Long, String> orderedScreens = loadWorkspaceScreensDb(context);
+                for (Long i : orderedScreens.keySet()) {
+                    workspaceScreens.put(i, orderedScreens.get(i));
                 }
 
                 synchronized (sBgLock) {
@@ -449,7 +449,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 }
 
                 // Update the workspace screens
-                updateWorkspaceScreenOrder(context, workspaceScreens);
+                updateWorkspaceScreenOrder(context, null);
 
                 if (!addedShortcutsFinal.isEmpty()) {
                     runOnMainThread(new Runnable() {
@@ -986,6 +986,10 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
      */
     void updateWorkspaceScreenOrder(Context context, final ArrayList<Long> screens) {
 
+        if (screens == null) {
+            return;
+        }
+
         final ArrayList<Long> screensCopy = new ArrayList<Long>(screens);
         final ContentResolver cr = context.getContentResolver();
         final Uri uri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
@@ -1022,8 +1026,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 }
 
                 synchronized (sBgLock) {
-                    sBgWorkspaceScreens.clear();
-                    sBgWorkspaceScreens.addAll(screensCopy);
+                    // sBgWorkspaceScreens.clear();
+                    // sBgWorkspaceScreens.addAll(screensCopy);
                 }
             }
         };
@@ -1255,32 +1259,18 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     }
 
     /** Loads the workspace screens db into a map of Rank -> ScreenId */
-    private static TreeMap<Integer, Long> loadWorkspaceScreensDb(Context context) {
+    private static HashMap<Long, String> loadWorkspaceScreensDb(Context context) {
         final ContentResolver contentResolver = context.getContentResolver();
         final Uri screensUri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
         final Cursor sc = contentResolver.query(screensUri, null, null, null, null);
-        TreeMap<Integer, Long> orderedScreens = new TreeMap<Integer, Long>();
+        HashMap<Long, String> orderedScreens = new HashMap<Long, String>();
 
-        try {
-            final int idIndex = sc.getColumnIndexOrThrow(LauncherSettings.WorkspaceScreens._ID);
-            final int rankIndex = sc.getColumnIndexOrThrow(LauncherSettings.WorkspaceScreens.SCREEN_RANK);
-            while (sc.moveToNext()) {
-                try {
-                    long screenId = sc.getLong(idIndex);
-                    int rank = sc.getInt(rankIndex);
-                    orderedScreens.put(rank, screenId);
-                } catch (Exception e) {
-
-                }
-            }
-        } finally {
-            sc.close();
-        }
-
-        ArrayList<String> orderedScreensPairs = new ArrayList<String>();
-        for (Integer i : orderedScreens.keySet()) {
-            orderedScreensPairs.add("{ " + i + ": " + orderedScreens.get(i) + " }");
-        }
+        // TODO debug data
+        orderedScreens.put(0L, "视频");
+        orderedScreens.put(1L, "搜索");
+        orderedScreens.put(2L, "应用");
+        orderedScreens.put(3L, "发现");
+        orderedScreens.put(4L, "管理");
         return orderedScreens;
     }
 
@@ -1681,9 +1671,9 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     context.registerReceiver(new AppsAvailabilityCheck(), new IntentFilter(StartupReceiver.SYSTEM_READY), null, sWorker);
                 }
 
-                TreeMap<Integer, Long> orderedScreens = loadWorkspaceScreensDb(mContext);
-                for (Integer i : orderedScreens.keySet()) {
-                    sBgWorkspaceScreens.add(orderedScreens.get(i));
+                HashMap<Long, String> orderedScreens = loadWorkspaceScreensDb(mContext);
+                for (Long i : orderedScreens.keySet()) {
+                    sBgWorkspaceScreens.put(i, orderedScreens.get(i));
                 }
             }
             return false;
@@ -1774,13 +1764,13 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             });
         }
 
-        private void bindWorkspaceScreens(final Callbacks oldCallbacks, final ArrayList<Long> orderedScreens) {
+        private void bindWorkspaceScreens(final Callbacks oldCallbacks, final HashMap<Long, String> orderedScreens) {
             final Runnable r = new Runnable() {
                 @Override
                 public void run() {
                     Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
-                        callbacks.bindScreens(null);
+                        callbacks.bindScreens(orderedScreens);
                     }
                 }
             };
@@ -1857,12 +1847,12 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             ArrayList<ItemInfo> workspaceItems = new ArrayList<ItemInfo>();
             HashMap<Long, FolderInfo> folders = new HashMap<Long, FolderInfo>();
             HashMap<Long, ItemInfo> itemsIdMap = new HashMap<Long, ItemInfo>();
-            ArrayList<Long> orderedScreenIds = new ArrayList<Long>();
+            HashMap<Long, String> orderedScreenIds = new HashMap<Long, String>();
             synchronized (sBgLock) {
                 workspaceItems.addAll(sBgWorkspaceItems);
                 folders.putAll(sBgFolders);
                 itemsIdMap.putAll(sBgItemsIdMap);
-                orderedScreenIds.addAll(sBgWorkspaceScreens);
+                orderedScreenIds.putAll(sBgWorkspaceScreens);
             }
 
             final boolean isLoadingSynchronously = synchronizeBindPage != PagedView.INVALID_RESTORE_PAGE;
@@ -1872,7 +1862,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 currScreen = PagedView.INVALID_RESTORE_PAGE;
             }
             final int currentScreen = currScreen;
-            final long currentScreenId = currentScreen < 0 ? INVALID_SCREEN_ID : orderedScreenIds.get(currentScreen);
+            final long currentScreenId = currentScreen < 0 ? INVALID_SCREEN_ID : currentScreen;
 
             // Load all the items that are on the current page first (and in the process, unbind
             // all the existing workspace items before we call startBinding() below.
@@ -1981,8 +1971,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     final long t = SystemClock.uptimeMillis();
                     final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
-                        // TODO
-                        // callbacks.bindAllApplications(list);
+                        callbacks.bindItems(0, null);
                     }
                     if (DEBUG_LOADERS) {
                         Log.d(TAG, "bound all " + list.size() + " apps from cache in " + (SystemClock.uptimeMillis() - t) + "ms");
@@ -1999,17 +1988,14 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
         private void loadAllApps() {
             final long loadTime = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;
-
             final Callbacks oldCallbacks = mCallbacks.get();
             if (oldCallbacks == null) {
-                // This launcher has exited and nobody bothered to tell us. Just bail.
                 Log.w(TAG, "LoaderTask running with no launcher (loadAllApps)");
                 return;
             }
 
             final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
             mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
             final List<UserHandleCompat> profiles = mUserManager.getUserProfiles();
 
             // Clear the list of apps
@@ -2070,7 +2056,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
                         // TODO
-                        // callbacks.bindAllApplications(added);
+                        callbacks.bindAllApplications(added);
                         if (DEBUG_LOADERS) {
                             Log.d(TAG, "bound " + added.size() + " apps in " + (SystemClock.uptimeMillis() - bindTime) + "ms");
                         }
