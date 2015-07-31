@@ -16,13 +16,6 @@
         android:layout_height="match_parent"
         android:layout_below="@id/tabspace"
         android:background="@drawable/workspace_bg" >
-
-        <com.stv.launcher.widget.MetroViewPager
-            android:id="@+id/metro_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dip"
-            android:background="#ffffff" />
     </com.stv.launcher.widget.MetroSpace>
 
     <!--

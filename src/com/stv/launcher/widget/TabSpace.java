@@ -2,30 +2,32 @@ package com.stv.launcher.widget;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Canvas;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.letv.launcher.R;
+import com.letv.launcher.ScreenManagerActivity;
+import com.letv.launcher.model.ScreenInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabSpace extends FrameLayout implements View.OnFocusChangeListener {
+public class TabSpace extends FrameLayout implements View.OnFocusChangeListener, View.OnClickListener {
 
     public interface OnTabChangeListener {
         void onTabChanged(int tabId);
     }
 
+    public static final int EDIT_TAB_RECODE = 2012;
+
     private boolean mHasOverlappingRendering = false;
     private TabContent mTabContent;
+    private Button mManagerBt;
     private List<TabSpec> mTabSpecs = new ArrayList<TabSpec>(2);
 
     private OnTabChangeListener mOnTabChangeListener;
@@ -40,10 +42,29 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener 
 
     public TabSpace(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        // tab content
         mTabContent = new TabContent(context);
         mTabContent.setOrientation(LinearLayout.HORIZONTAL);
         FrameLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         addView(mTabContent, params);
+
+        // manager button
+        mManagerBt = new Button(context);
+        mManagerBt.setText("管理");
+        mManagerBt.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent();
+                i.setClass(getContext(), ScreenManagerActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(i);
+            }
+        });
+
+        LayoutParams btParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        btParams.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+        addView(mManagerBt, btParams);
     }
 
     @SuppressLint("NewApi")
@@ -64,6 +85,14 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener 
         mOnTabChangeListener = l;
     }
 
+    public void addTabs(ArrayList<ScreenInfo> orderedScreens) {
+        if (orderedScreens != null) {
+            for (ScreenInfo screen : orderedScreens) {
+                addTab(newTabSpec(screen.name));
+            }
+        }
+    }
+
     public void addTab(TabSpec tabSpec) {
         if (tabSpec.tag == null || tabSpec.tag.isEmpty()) {
             throw new IllegalArgumentException("you must specify a way to create the tab tag.");
@@ -75,10 +104,12 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener 
     private View createTabView(TabSpec tabSpec) {
         Button textView = new Button(getContext());
         textView.setOnFocusChangeListener(this);
+        textView.setOnClickListener(this);
         textView.setSelectAllOnFocus(true);
         textView.setFocusable(true);
         textView.setTextSize(30);
         textView.setText(tabSpec.tag);
+        textView.setTag(tabSpec);
         textView.setTextColor(R.drawable.temp_text_selector);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
         params.setMargins(20, 0, 20, 0);
@@ -98,12 +129,26 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener 
             int numTabs = getTabCount();
             while (i < numTabs) {
                 if (mTabContent.getChildAt(i) == v) {
-                    setCurrentTab(i);
+                    // setCurrentTab(i);
                     mOnTabChangeListener.onTabChanged(i);
                     break;
                 }
                 i++;
             }
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int numTabs = getTabCount();
+        int i = 0;
+        while (i < numTabs) {
+            if (mTabContent.getChildAt(i) == v) {
+                v.requestFocus();
+                mOnTabChangeListener.onTabChanged(i);
+                break;
+            }
+            i++;
         }
     }
 

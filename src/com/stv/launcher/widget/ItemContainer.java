@@ -10,19 +10,15 @@ public class ItemContainer extends RelativeLayout {
     public int index;
 
     public ItemContainer(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public ItemContainer(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public ItemContainer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public ItemContainer(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

@@ -1,27 +1,21 @@
 package com.letv.launcher;
 
 import android.app.Activity;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
-import android.widget.Toast;
-import android.widget.ImageView.ScaleType;
 
+import com.letv.launcher.model.ScreenInfo;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.launcher3widget.PagedView;
-import com.stv.launcher.launcher3widget.Workspace;
-import com.stv.launcher.widget.CellLayout;
 import com.stv.launcher.widget.FocusIndicatorView;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.TabSpace;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Launcher extends Activity implements LauncherModel.Callbacks {
 
@@ -56,9 +50,29 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
         mTabSpace.setOnTabChangeListener(mMetroSpace);
     }
 
+    public MetroSpace getMetroSpace() {
+        return mMetroSpace;
+    }
+
+    public TabSpace getTabSpace() {
+        return mTabSpace;
+    }
 
     public void onClick(View v) {
 
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        handleActivityResult(requestCode, resultCode, data);
+    }
+
+    private void handleActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == TabSpace.EDIT_TAB_RECODE) {
+            ArrayList<ScreenInfo> edit = new ArrayList<ScreenInfo>();
+            bindScreens(edit);
+        }
     }
 
     @Override
@@ -67,12 +81,11 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
     }
 
     @Override
-    public void bindScreens(HashMap<Long, String> orderedScreenIds) {
-        Log.d(TAG, "bindScreens " + orderedScreenIds);
-        if (orderedScreenIds != null) {
-            for (Long i : orderedScreenIds.keySet()) {
-                mTabSpace.addTab(mTabSpace.newTabSpec(orderedScreenIds.get(i)));
-            }
+    public void bindScreens(ArrayList<ScreenInfo> orderedScreens) {
+        Log.d(TAG, "bindScreens " + orderedScreens);
+        if (orderedScreens != null) {
+            mTabSpace.addTabs(orderedScreens);
+            mMetroSpace.bindScreens(orderedScreens);
         }
     }
 

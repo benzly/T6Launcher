@@ -43,4 +43,9 @@ public class MetroViewPagerAdapter extends PagerAdapter {
     public int getItemPosition(Object object) {
         return POSITION_NONE;
     }
+
+    public void add(ArrayList<View> pages) {
+        mPagers.clear();
+        mPagers.addAll(pages);
+    }
 }
