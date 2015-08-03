@@ -48,6 +48,7 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
         mTabSpace = (TabSpace) findViewById(R.id.tabspace);
         mMetroSpace = (MetroSpace) findViewById(R.id.metro_space);
         mTabSpace.setOnTabChangeListener(mMetroSpace);
+        mTabSpace.setLauncher(this);
     }
 
     public MetroSpace getMetroSpace() {
@@ -71,6 +72,7 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
     private void handleActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == TabSpace.EDIT_TAB_RECODE) {
             ArrayList<ScreenInfo> edit = new ArrayList<ScreenInfo>();
+            edit.addAll(ScreenManagerActivity.sScrennDatas);
             bindScreens(edit);
         }
     }

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.letv.launcher.Launcher;
 import com.letv.launcher.R;
 import com.letv.launcher.ScreenManagerActivity;
 import com.letv.launcher.model.ScreenInfo;
@@ -28,6 +29,8 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
     private boolean mHasOverlappingRendering = false;
     private TabContent mTabContent;
     private Button mManagerBt;
+    private Launcher mLauncher;
+    private ArrayList<ScreenInfo> mScreenInfos = new ArrayList<ScreenInfo>();
     private List<TabSpec> mTabSpecs = new ArrayList<TabSpec>(2);
 
     private OnTabChangeListener mOnTabChangeListener;
@@ -55,10 +58,10 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         mManagerBt.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent();
-                i.setClass(getContext(), ScreenManagerActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(i);
+                ScreenManagerActivity.sScrennDatas.clear();
+                ScreenManagerActivity.sScrennDatas.addAll(mScreenInfos);
+                Intent i = new Intent(mLauncher, ScreenManagerActivity.class);
+                mLauncher.startActivityForResult(i, EDIT_TAB_RECODE);
             }
         });
 
@@ -81,12 +84,18 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         mTabContent.setChildrenDrawingOrderEnabled(mHasOverlappingRendering);
     }
 
+    public void setLauncher(Launcher launcher) {
+        mLauncher = launcher;
+    }
+
     public void setOnTabChangeListener(OnTabChangeListener l) {
         mOnTabChangeListener = l;
     }
 
     public void addTabs(ArrayList<ScreenInfo> orderedScreens) {
         if (orderedScreens != null) {
+            mScreenInfos.clear();
+            mScreenInfos.addAll(orderedScreens);
             for (ScreenInfo screen : orderedScreens) {
                 addTab(newTabSpec(screen.name));
             }
