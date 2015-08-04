@@ -4,9 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.stv.launcher.widget.TabSpace;
-import com.stv.launcher.widget.TabSpace.OnTabChangeListener;
+import com.stv.launcher.widget.TabSpace.OnTabChangedListener;
 
-public class Workspace extends SmoothPagedView implements OnTabChangeListener {
+public class Workspace extends SmoothPagedView implements OnTabChangedListener {
 
     public static final int EXTRA_EMPTY_SCREEN_ID = -1;
 
@@ -31,8 +31,8 @@ public class Workspace extends SmoothPagedView implements OnTabChangeListener {
     }
 
     @Override
-    public void onTabChanged(int tabId) {
-        snapToPage(tabId);
+    public void onTabChanged(String tabId) {
+        snapToPage(0);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.stv.launcher.widget;
 
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -8,7 +9,9 @@ import java.util.ArrayList;
 
 public class MetroViewPagerAdapter extends PagerAdapter {
 
+    private static final String TAG = MetroViewPagerAdapter.class.getSimpleName();
     private ArrayList<View> mPagers;
+    private int mRefreshPosition = -1;
 
     public MetroViewPagerAdapter(ArrayList<View> pagers) {
         if (pagers == null) {
@@ -20,13 +23,17 @@ public class MetroViewPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
+        Log.d(TAG, "destroyItem " + position);
         container.removeView(mPagers.get(position));
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        container.addView(mPagers.get(position));
-        return mPagers.get(position);
+        Log.d(TAG, "instantiateItem " + position);
+        View item = mPagers.get(position);
+        item.setTag(position);
+        container.addView(item);
+        return item;
     }
 
     @Override
@@ -41,11 +48,22 @@ public class MetroViewPagerAdapter extends PagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        return POSITION_NONE;
+        View view = (View) object;
+        if (mRefreshPosition == (Integer) view.getTag()) {
+            return POSITION_NONE;
+        } else {
+            return POSITION_UNCHANGED;
+        }
     }
 
     public void add(ArrayList<View> pages) {
         mPagers.clear();
         mPagers.addAll(pages);
     }
+
+    public void notifyDataSetChanged(int position) {
+        mRefreshPosition = position;
+        notifyDataSetChanged();
+    }
+
 }

@@ -13,15 +13,14 @@ import android.widget.LinearLayout;
 import com.letv.launcher.Launcher;
 import com.letv.launcher.R;
 import com.letv.launcher.ScreenManagerActivity;
-import com.letv.launcher.model.ScreenInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TabSpace extends FrameLayout implements View.OnFocusChangeListener, View.OnClickListener {
 
-    public interface OnTabChangeListener {
-        void onTabChanged(int tabId);
+    public interface OnTabChangedListener {
+        void onTabChanged(String tabId);
     }
 
     public static final int EDIT_TAB_RECODE = 2012;
@@ -30,10 +29,10 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
     private TabContent mTabContent;
     private Button mManagerBt;
     private Launcher mLauncher;
-    private ArrayList<ScreenInfo> mScreenInfos = new ArrayList<ScreenInfo>();
     private List<TabSpec> mTabSpecs = new ArrayList<TabSpec>(2);
+    private int mCurrentTab = -1;
 
-    private OnTabChangeListener mOnTabChangeListener;
+    private OnTabChangedListener mOnTabChangeListener;
 
     public TabSpace(Context context) {
         this(context, null);
@@ -59,7 +58,7 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
             @Override
             public void onClick(View v) {
                 ScreenManagerActivity.sScrennDatas.clear();
-                ScreenManagerActivity.sScrennDatas.addAll(mScreenInfos);
+                ScreenManagerActivity.sScrennDatas.addAll(mLauncher.mScreens);
                 Intent i = new Intent(mLauncher, ScreenManagerActivity.class);
                 mLauncher.startActivityForResult(i, EDIT_TAB_RECODE);
             }
@@ -88,18 +87,8 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         mLauncher = launcher;
     }
 
-    public void setOnTabChangeListener(OnTabChangeListener l) {
+    public void setOnTabChangedListener(OnTabChangedListener l) {
         mOnTabChangeListener = l;
-    }
-
-    public void addTabs(ArrayList<ScreenInfo> orderedScreens) {
-        if (orderedScreens != null) {
-            mScreenInfos.clear();
-            mScreenInfos.addAll(orderedScreens);
-            for (ScreenInfo screen : orderedScreens) {
-                addTab(newTabSpec(screen.name));
-            }
-        }
     }
 
     public void addTab(TabSpec tabSpec) {
@@ -108,6 +97,35 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         }
         mTabSpecs.add(tabSpec);
         mTabContent.addView(createTabView(tabSpec));
+    }
+
+    public void removeTab(String tag) {
+        int beRmIndex = -1;
+        for (int i = 0; i < mTabSpecs.size(); i++) {
+            if (tag.equals(mTabSpecs.get(i).tag)) {
+                beRmIndex = i;
+                break;
+            }
+        }
+        if (beRmIndex != -1) {
+            mTabSpecs.remove(beRmIndex);
+            mTabContent.removeViewAt(beRmIndex);
+        }
+    }
+
+    public String getTagByTab(int tab) {
+        if (tab >= 0 && tab < mTabSpecs.size()) {
+            return mTabSpecs.get(tab).tag;
+        }
+        return null;
+    }
+
+    public int getCurrentTab() {
+        return mCurrentTab;
+    }
+
+    public String getCurrentTag() {
+        return mTabSpecs.get(mCurrentTab).tag;
     }
 
     private View createTabView(TabSpec tabSpec) {
@@ -139,7 +157,8 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
             while (i < numTabs) {
                 if (mTabContent.getChildAt(i) == v) {
                     // setCurrentTab(i);
-                    mOnTabChangeListener.onTabChanged(i);
+                    mCurrentTab = i;
+                    mOnTabChangeListener.onTabChanged(mTabSpecs.get(i).tag);
                     break;
                 }
                 i++;
@@ -154,7 +173,8 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         while (i < numTabs) {
             if (mTabContent.getChildAt(i) == v) {
                 v.requestFocus();
-                mOnTabChangeListener.onTabChanged(i);
+                setCurrentTab(i);
+                mOnTabChangeListener.onTabChanged(mTabSpecs.get(i).tag);
                 break;
             }
             i++;
@@ -165,7 +185,23 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         return mTabContent.getChildCount();
     }
 
+    public void setCurrentTabByTag(String tag) {
+        for (int i = 0; i < mTabSpecs.size(); i++) {
+            if (mTabSpecs.get(i).getTag().equals(tag)) {
+                setCurrentTab(i);
+                break;
+            }
+        }
+    }
+
     public void setCurrentTab(int index) {
+        if (index < 0 || index >= mTabSpecs.size()) {
+            return;
+        }
+        if (index == mCurrentTab) {
+            return;
+        }
+        mCurrentTab = index;
         mTabContent.setCurrentTab(index);
     }
 

@@ -1,11 +1,13 @@
 package com.letv.launcher;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.letv.launcher.fragment.EmptyFragment;
+import com.letv.launcher.fragment.SpaceAdapter;
 import com.letv.launcher.model.ScreenInfo;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
@@ -14,10 +16,9 @@ import com.stv.launcher.widget.FocusIndicatorView;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.TabSpace;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Launcher extends Activity implements LauncherModel.Callbacks {
+public class Launcher extends FragmentActivity implements LauncherModel.Callbacks {
 
     public static final String TAG = Launcher.class.getSimpleName();
 
@@ -27,7 +28,10 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
 
     private TabSpace mTabSpace;
     private MetroSpace mMetroSpace;
+    private SpaceAdapter mSpaceAdapter;
     private FocusIndicatorView mFocusIndicatorView;
+
+    public ArrayList<ScreenInfo> mScreens = new ArrayList<ScreenInfo>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,20 +39,23 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
         setContentView(R.layout.activity_launcher);
 
         LauncherAppState app = LauncherAppState.getInstance();
+        mLauncherModel = app.setLauncher(this);
+
+        setupViews();
         // Lazy-initialize the dynamic grid
         DeviceProfile grid = app.initDynamicGrid(this);
-        mLauncherModel = app.setLauncher(this);
-        setupViews();
         grid.layout(this);
+
         mLauncherModel.startLoader(true, PagedView.INVALID_RESTORE_PAGE);
     }
 
     private void setupViews() {
         mFocusIndicatorView = (FocusIndicatorView) findViewById(R.id.focus_indicator);
+
         mTabSpace = (TabSpace) findViewById(R.id.tabspace);
         mMetroSpace = (MetroSpace) findViewById(R.id.metro_space);
-        mTabSpace.setOnTabChangeListener(mMetroSpace);
         mTabSpace.setLauncher(this);
+        mSpaceAdapter = new SpaceAdapter(this, mTabSpace, mMetroSpace);
     }
 
     public MetroSpace getMetroSpace() {
@@ -71,10 +78,24 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
 
     private void handleActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == TabSpace.EDIT_TAB_RECODE) {
-            ArrayList<ScreenInfo> edit = new ArrayList<ScreenInfo>();
-            edit.addAll(ScreenManagerActivity.sScrennDatas);
-            bindScreens(edit);
+
+            // need remove
+            for (ScreenInfo info : ScreenManagerActivity.sBeRemoved) {
+                mScreens.remove(info);
+                mSpaceAdapter.removeTab(info.name);
+            }
+
+            // need add
+            for (ScreenInfo info : ScreenManagerActivity.sBeAdded) {
+                mScreens.add(info);
+                mSpaceAdapter.addTab(info.name, EmptyFragment.class, null);
+            }
         }
+    }
+
+
+    public void debug() {
+        mSpaceAdapter.removeTab(mTabSpace.getTagByTab(0));
     }
 
     @Override
@@ -86,14 +107,22 @@ public class Launcher extends Activity implements LauncherModel.Callbacks {
     public void bindScreens(ArrayList<ScreenInfo> orderedScreens) {
         Log.d(TAG, "bindScreens " + orderedScreens);
         if (orderedScreens != null) {
-            mTabSpace.addTabs(orderedScreens);
-            mMetroSpace.bindScreens(orderedScreens);
+            mScreens.clear();
+            mScreens.addAll(orderedScreens);
+
+            for (ScreenInfo screen : orderedScreens) {
+                mSpaceAdapter.addTab(screen.name, EmptyFragment.class, null);
+            }
+            mTabSpace.setCurrentTab(2);
         }
     }
 
     @Override
     public void bindItems(int screenId, ArrayList<ItemInfo> items) {
-        Log.d(TAG, "bindItems screenId=" + screenId + " size=" + items);
+        Log.d(TAG, "bindItems screenId=" + screenId);
+        if (items != null) {
+            mSpaceAdapter.bindTabItems(screenId, items);
+        }
     }
 
     @Override

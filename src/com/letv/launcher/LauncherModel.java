@@ -1436,8 +1436,12 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 }
                 waitForIdle();
 
+                // load items
+                if (DEBUG_LOADERS) Log.d(TAG, "step 2: loading all items");
+                loadAndBindItems();
+
                 // second step
-                if (DEBUG_LOADERS) Log.d(TAG, "step 2: loading all apps");
+                if (DEBUG_LOADERS) Log.d(TAG, "step 3: loading all apps");
                 loadAndBindAllApps();
 
                 // Restore the default thread priority after we are done loading items
@@ -1930,6 +1934,33 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             } else {
                 runOnMainThread(r, MAIN_THREAD_BINDING_RUNNABLE);
             }
+        }
+
+        private void loadAndBindItems() {
+            final Callbacks oldCallbacks = mCallbacks.get();
+            for (ScreenInfo screen : sBgWorkspaceScreens) {
+                final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
+                if (callbacks != null) {
+                    ArrayList<ItemInfo> ret = new ArrayList<ItemInfo>();
+                    callbacks.bindItems(screen.id, getDebugData(screen.name, ret));
+                }
+            }
+        }
+
+        // TODO debug
+        private ArrayList<ItemInfo> getDebugData(String screenName, ArrayList<ItemInfo> ret) {
+            if (screenName.equals("视频")) {
+                for (int i = 0; i < 10; i++) {
+                    ItemInfo info = new ItemInfo();
+                    info.title = "视频 " + i;
+                    ret.add(info);
+                }
+            } else if (screenName.equals("搜索")) {
+
+            } else if (screenName.equals("应用")) {
+
+            }
+            return ret;
         }
 
         private void loadAndBindAllApps() {

@@ -12,4 +12,11 @@ public class ScreenInfo {
         this.name = n;
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        // return super.toString();
+        return name;
+    }
 }
