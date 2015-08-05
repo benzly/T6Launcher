@@ -2,18 +2,13 @@ package com.letv.launcher;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.letv.launcher.model.LayoutType;
-import com.letv.launcher.model.ScreenInfo;
 import com.stv.launcher.widget.TabSpace;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ScreenManagerActivity extends Activity {
@@ -22,7 +17,7 @@ public class ScreenManagerActivity extends Activity {
     public static final ArrayList<ScreenInfo> sBeRemoved = new ArrayList<ScreenInfo>();
     public static final ArrayList<ScreenInfo> sBeAdded = new ArrayList<ScreenInfo>();
 
-    String[] array = {"视频", "搜索", "应用", "发现", "亲子", "汽车", "游戏"};
+    String[] array = {"视频", "搜索", "应用", "发现", "亲子", "汽车", "游戏", "乐见"};
     LinearLayout content;
 
     @Override

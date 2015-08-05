@@ -1,4 +1,4 @@
-package com.letv.launcher.model;
+package com.letv.launcher;
 
 public enum LayoutType {
     /** 手动布局 */

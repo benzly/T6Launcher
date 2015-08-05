@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.letv.launcher.model.ScreenInfo;
+import com.letv.launcher.ScreenInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +21,9 @@ public class MetroSpace extends FrameLayout {
 
     private MetroViewPager mViewPager;
     private ArrayList<ScreenInfo> mScreenInfos = new ArrayList<ScreenInfo>();
+
+    public static final int EXTRA_EMPTY_SCREEN_ID = 2012;
+    public static final int INVALID_RESTORE_PAGE = -1;
 
     public MetroSpace(Context context) {
         this(context, null);

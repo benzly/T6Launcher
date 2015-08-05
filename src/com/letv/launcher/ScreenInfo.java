@@ -1,4 +1,4 @@
-package com.letv.launcher.model;
+package com.letv.launcher;
 
 public class ScreenInfo {
 

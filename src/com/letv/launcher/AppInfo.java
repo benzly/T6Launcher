@@ -17,15 +17,12 @@ package com.letv.launcher;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.stv.launcher.compat.LauncherActivityInfoCompat;
-import com.stv.launcher.compat.UserManagerCompat;
 import com.stv.launcher.compat.UserHandleCompat;
+import com.stv.launcher.compat.UserManagerCompat;
 import com.stv.launcher.utils.IconCache;
 
 import java.util.ArrayList;

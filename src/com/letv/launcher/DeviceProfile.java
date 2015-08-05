@@ -17,14 +17,12 @@ package com.letv.launcher;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 
-import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.MetroViewPager;
 
 import java.util.ArrayList;

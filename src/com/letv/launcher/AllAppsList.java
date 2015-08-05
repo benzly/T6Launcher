@@ -12,12 +12,11 @@
  * the License.
  */
 
-package com.letv.launcher.model;
+package com.letv.launcher;
 
 import android.content.ComponentName;
 import android.content.Context;
 
-import com.letv.launcher.AppInfo;
 import com.stv.launcher.compat.LauncherActivityInfoCompat;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.UserHandleCompat;

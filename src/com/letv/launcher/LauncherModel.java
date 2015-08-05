@@ -30,20 +30,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
-import com.letv.launcher.model.AllAppsList;
-import com.letv.launcher.model.LayoutType;
-import com.letv.launcher.model.ScreenInfo;
 import com.stv.launcher.compat.LauncherActivityInfoCompat;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.PackageInstallerCompat;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
-import com.stv.launcher.launcher3widget.PagedView;
 import com.stv.launcher.utils.AppFilter;
 import com.stv.launcher.utils.DeferredHandler;
 import com.stv.launcher.utils.IconCache;
 import com.stv.launcher.utils.Utilities;
+import com.stv.launcher.widget.MetroSpace;
 
 import java.lang.ref.WeakReference;
 import java.security.InvalidParameterException;
@@ -1177,7 +1174,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             }
         }
         if (runLoader) {
-            startLoader(false, PagedView.INVALID_RESTORE_PAGE);
+            startLoader(false, MetroSpace.INVALID_RESTORE_PAGE);
         }
     }
 
@@ -1221,7 +1218,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 // also, don't downgrade isLaunching if we're already running
                 isLaunching = isLaunching || stopLoaderLocked();
                 mLoaderTask = new LoaderTask(mApp.getContext(), isLaunching, loadFlags);
-                if (synchronousBindPage != PagedView.INVALID_RESTORE_PAGE && mAllAppsLoaded && mWorkspaceLoaded) {
+                if (synchronousBindPage != MetroSpace.INVALID_RESTORE_PAGE && mAllAppsLoaded && mWorkspaceLoaded) {
                     mLoaderTask.runBindSynchronousPage(synchronousBindPage);
                 } else {
                     sWorkerThread.setPriority(Thread.NORM_PRIORITY);
@@ -1371,7 +1368,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         }
 
         void runBindSynchronousPage(int synchronousBindPage) {
-            if (synchronousBindPage == PagedView.INVALID_RESTORE_PAGE) {
+            if (synchronousBindPage == MetroSpace.INVALID_RESTORE_PAGE) {
                 // Ensure that we have a valid page index to load synchronously
                 throw new RuntimeException("Should not call runBindSynchronousPage() without " + "valid page index");
             }
@@ -1853,11 +1850,11 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 orderedScreens.addAll(sBgWorkspaceScreens);
             }
 
-            final boolean isLoadingSynchronously = synchronizeBindPage != PagedView.INVALID_RESTORE_PAGE;
+            final boolean isLoadingSynchronously = synchronizeBindPage != MetroSpace.INVALID_RESTORE_PAGE;
             int currScreen = isLoadingSynchronously ? synchronizeBindPage : oldCallbacks.getCurrentWorkspaceScreen();
             if (currScreen >= orderedScreens.size()) {
                 // There may be no workspace screens (just hotseat items and an empty page).
-                currScreen = PagedView.INVALID_RESTORE_PAGE;
+                currScreen = MetroSpace.INVALID_RESTORE_PAGE;
             }
             final int currentScreen = currScreen;
             final long currentScreenId = currentScreen < 0 ? INVALID_SCREEN_ID : currentScreen;
@@ -1896,7 +1893,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 r = new Runnable() {
                     public void run() {
                         Callbacks callbacks = tryGetCallbacks(oldCallbacks);
-                        if (callbacks != null && currentScreen != PagedView.INVALID_RESTORE_PAGE) {
+                        if (callbacks != null && currentScreen != MetroSpace.INVALID_RESTORE_PAGE) {
                             callbacks.onPageBoundSynchronously(currentScreen);
                         }
                     }

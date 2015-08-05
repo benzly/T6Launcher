@@ -19,16 +19,12 @@ import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewParent;
-import android.widget.Toast;
 
 import com.letv.launcher.R;
-import com.stv.launcher.launcher3widget.PagedView;
 import com.stv.launcher.utils.LauncherAnimUtils;
 
 public class FocusIndicatorView extends View implements View.OnFocusChangeListener {
@@ -168,7 +164,8 @@ public class FocusIndicatorView extends View implements View.OnFocusChangeListen
 
     private static void getPagedViewScrollShift(View child, int[] shift) {
         ViewParent parent = child.getParent();
-        if (parent instanceof PagedView) {
+        // TODO
+        if (parent instanceof MetroSpace) {
             View parentView = (View) parent;
             child.getLocationInWindow(sTempPos);
             shift[0] = parentView.getPaddingLeft() - sTempPos[0];

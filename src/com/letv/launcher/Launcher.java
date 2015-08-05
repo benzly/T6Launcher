@@ -8,10 +8,8 @@ import android.view.View;
 
 import com.letv.launcher.fragment.EmptyFragment;
 import com.letv.launcher.fragment.SpaceAdapter;
-import com.letv.launcher.model.ScreenInfo;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
-import com.stv.launcher.launcher3widget.PagedView;
 import com.stv.launcher.widget.FocusIndicatorView;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.TabSpace;
@@ -46,7 +44,7 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
         DeviceProfile grid = app.initDynamicGrid(this);
         grid.layout(this);
 
-        mLauncherModel.startLoader(true, PagedView.INVALID_RESTORE_PAGE);
+        mLauncherModel.startLoader(true, MetroSpace.INVALID_RESTORE_PAGE);
     }
 
     private void setupViews() {

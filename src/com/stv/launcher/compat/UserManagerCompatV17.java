@@ -15,12 +15,7 @@
 package com.stv.launcher.compat;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.UserHandle;
 import android.os.UserManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserManagerCompatV17 extends UserManagerCompatV16 {
     protected UserManager mUserManager;

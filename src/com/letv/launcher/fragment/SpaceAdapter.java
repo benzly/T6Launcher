@@ -1,16 +1,17 @@
 package com.letv.launcher.fragment;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.ViewGroup;
 
 import com.letv.launcher.ItemInfo;
+import com.letv.launcher.v4fragment.FragmentStatePagerAdapter;
+import com.letv.lejianplugin.PluginManager;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.MetroViewPager;
 import com.stv.launcher.widget.TabSpace;
@@ -29,19 +30,24 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         String tag;
         Class<?> clss;
         Bundle args;
-        BaseFragment fragment;
+        Fragment fragment;
 
         TabInfo(String tag, Class<?> _class, Bundle args) {
             this.tag = tag;
             this.clss = _class;
             this.args = args;
-            this.fragment = (BaseFragment) Fragment.instantiate(context, clss.getName());
-            this.fragment.tag = tag;
+
+            if (tag.equals("乐见")) {
+                this.fragment = PluginManager.createFragment();
+            } else {
+                this.fragment = (BaseFragment) Fragment.instantiate(context, clss.getName());
+                ((BaseFragment) this.fragment).tag = tag;
+            }
         }
     }
 
     public SpaceAdapter(FragmentActivity activity, TabSpace tabSpace, MetroSpace metroSpace) {
-        super(activity.getSupportFragmentManager());
+        super(activity.getFragmentManager());
         this.context = activity;
         this.tabSpace = tabSpace;
         this.metroSpace = metroSpace;
@@ -82,7 +88,7 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
 
     public void bindTabItems(int tab, ArrayList<ItemInfo> items) {
         TabInfo tabInfo = tabs.get(tab);
-        tabInfo.fragment.bindData(items);
+        // tabInfo.fragment.bindData(items);
     }
 
     @Override
@@ -91,7 +97,11 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         Log.d(TAG, "onTabChanged " + tabId + " " + position);
         metroSpace.getViewPager().setCurrentItem(position);
         for (int i = 0; i < tabs.size(); i++) {
-            tabs.get(position).fragment.onFragmentShowChanged(position == i);
+            if (tabs.get(position).fragment instanceof BaseFragment) {
+                ((BaseFragment) tabs.get(position).fragment).onFragmentShowChanged(position == i);
+            } else {
+                PluginManager.setVisible(tabs.get(position).fragment, position == i);
+            }
         }
     }
 

@@ -28,9 +28,9 @@ public class EmptyFragment extends BaseFragment {
     protected View onInflaterContent(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View content = inflater.inflate(R.layout.fragment_empty, null);
 
-        AppIconDrawer icon1 = (AppIconDrawer) content.findViewById(R.id.icon1);
-        AppIconDrawer icon2 = (AppIconDrawer) content.findViewById(R.id.icon2);
-        AppIconDrawer icon3 = (AppIconDrawer) content.findViewById(R.id.icon3);
+        icon1 = (AppIconDrawer) content.findViewById(R.id.icon1);
+        icon2 = (AppIconDrawer) content.findViewById(R.id.icon2);
+        icon3 = (AppIconDrawer) content.findViewById(R.id.icon3);
 
 
         return content;
@@ -51,9 +51,25 @@ public class EmptyFragment extends BaseFragment {
 
     }
 
+    boolean isAdd = false;
+    private AppIconDrawer icon1;
+    private AppIconDrawer icon2;
+    private AppIconDrawer icon3;
+
     @Override
     public void onFragmentShowChanged(boolean gainShow) {
         if (gainShow) {
+            if (tag.equals("乐见") && !isAdd) {
+                icon1.setVisibility(View.GONE);
+                icon2.setVisibility(View.GONE);
+                icon3.setVisibility(View.GONE);
+
+                // android.app.Fragment lejianFragment = PluginManager.createFragment();
+                // getActivity().getFragmentManager().replace(android.R.id.content, lejianFragment,
+                // "LEJIAN_FRAGMENT").commit();
+            } else {
+
+            }
             MetroSpace sp = (MetroSpace) ((ViewGroup) mContentView.getRootView()).findViewById(R.id.metro_space);
             Log.d(TAG, tag + " is show ------\n");
             if (mContentView != null) {

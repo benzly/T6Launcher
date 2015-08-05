@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.letv.lejianplugin.PluginManager;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.PackageInstallerCompat;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
@@ -76,6 +77,10 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
             throw new IllegalStateException("LauncherAppState inited before app context set");
         }
         Log.v(Launcher.TAG, "LauncherAppState inited");
+
+        //
+        PluginManager.init(sContext);
+
         // mScreenDensity *before* creating icon cache
         mScreenDensity = sContext.getResources().getDisplayMetrics().density;
 
@@ -102,7 +107,8 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
 
         ContentResolver resolver = sContext.getContentResolver();
         // TODO
-        //resolver.registerContentObserver(LauncherSettings.Favorites.CONTENT_URI, true, mFavoritesObserver);
+        // resolver.registerContentObserver(LauncherSettings.Favorites.CONTENT_URI, true,
+        // mFavoritesObserver);
     }
 
     /**

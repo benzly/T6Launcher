@@ -22,7 +22,7 @@ import android.util.Log;
 
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
-import com.stv.launcher.launcher3widget.Workspace;
+import com.stv.launcher.widget.MetroSpace;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -163,7 +163,7 @@ public class ItemInfo {
         long serialNumber = UserManagerCompat.getInstance(context).getSerialNumberForUser(user);
         values.put(LauncherSettings.Favorites.PROFILE_ID, serialNumber);
 
-        if (screenId == Workspace.EXTRA_EMPTY_SCREEN_ID) {
+        if (screenId == MetroSpace.EXTRA_EMPTY_SCREEN_ID) {
             // We should never persist an item on the extra empty screen.
             throw new RuntimeException("Screen id should not be EXTRA_EMPTY_SCREEN_ID");
         }
