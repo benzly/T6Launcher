@@ -91,7 +91,7 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         Log.d(TAG, "onTabChanged " + tabId + " " + position);
         metroSpace.getViewPager().setCurrentItem(position);
         for (int i = 0; i < tabs.size(); i++) {
-            tabs.get(position).fragment.onFragmentShowChange(position == i);
+            tabs.get(position).fragment.onFragmentShowChanged(position == i);
         }
     }
 

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.letv.launcher.ItemInfo;
 import com.letv.launcher.R;
+import com.stv.launcher.widget.AppIconDrawer;
+import com.stv.launcher.widget.MetroSpace;
 
 import java.util.ArrayList;
 
@@ -23,8 +25,15 @@ public class EmptyFragment extends BaseFragment {
     }
 
     @Override
-    protected View onInflaterView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_empty, null);
+    protected View onInflaterContent(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View content = inflater.inflate(R.layout.fragment_empty, null);
+
+        AppIconDrawer icon1 = (AppIconDrawer) content.findViewById(R.id.icon1);
+        AppIconDrawer icon2 = (AppIconDrawer) content.findViewById(R.id.icon2);
+        AppIconDrawer icon3 = (AppIconDrawer) content.findViewById(R.id.icon3);
+
+
+        return content;
     }
 
     @Override
@@ -38,11 +47,17 @@ public class EmptyFragment extends BaseFragment {
     }
 
     @Override
-    public void onFragmentShowChange(boolean isShow) {
-        if (isShow) {
+    protected void release() {
+
+    }
+
+    @Override
+    public void onFragmentShowChanged(boolean gainShow) {
+        if (gainShow) {
+            MetroSpace sp = (MetroSpace) ((ViewGroup) mContentView.getRootView()).findViewById(R.id.metro_space);
             Log.d(TAG, tag + " is show ------\n");
-            if (mRootView != null) {
-                ((TextView) mRootView.findViewById(R.id.tv)).setText(tag + "");
+            if (mContentView != null) {
+                ((TextView) mContentView.findViewById(R.id.tv)).setText(tag + "");
             }
         }
     }

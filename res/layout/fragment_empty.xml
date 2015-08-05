@@ -11,4 +11,27 @@
         android:layout_gravity="center"
         android:textSize="100sp" />
 
+    <com.stv.launcher.widget.AppIconDrawer
+        android:id="@+id/icon1"
+        android:layout_width="500px"
+        android:layout_height="300px"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:focusable="true" />
+
+    <com.stv.launcher.widget.AppIconDrawer
+        android:id="@+id/icon2"
+        android:layout_width="500px"
+        android:layout_height="300px"
+        android:layout_centerInParent="true"
+        android:focusable="true" />
+
+    <com.stv.launcher.widget.AppIconDrawer
+        android:id="@+id/icon3"
+        android:layout_width="500px"
+        android:layout_height="300px"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:focusable="true" />
+
 </RelativeLayout>

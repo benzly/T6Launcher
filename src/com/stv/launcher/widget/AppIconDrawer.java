@@ -7,18 +7,17 @@ import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
-import android.graphics.Shader;
-import android.graphics.Paint.Align;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.letv.launcher.R;
 import com.stv.launcher.utils.BitmapUtil;
 
-public class AppIconDrawer extends View {
+public class AppIconDrawer extends FocusProcessView {
     private static final String TAG = AppIconDrawer.class.getSimpleName();
 
     private boolean isReadly;

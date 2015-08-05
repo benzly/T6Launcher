@@ -7,8 +7,7 @@
         android:id="@+id/tabspace"
         android:layout_width="match_parent"
         android:layout_height="@dimen/tabspace_height"
-        android:layout_marginTop="@dimen/tabspace_margin_top"
-        android:background="#330099" />
+        android:layout_marginTop="@dimen/tabspace_margin_top" />
 
     <com.stv.launcher.widget.MetroSpace
         android:id="@+id/metro_space"
@@ -17,19 +16,6 @@
         android:layout_below="@id/tabspace"
         android:background="@drawable/workspace_bg" >
     </com.stv.launcher.widget.MetroSpace>
-
-    <!--
-         <com.stv.launcher.launcher3widget.Workspace
-        android:id="@+id/workspace"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tabspace"
-        android:background="@drawable/workspace_bg"
-        android:paddingLeft="16dip"
-        android:paddingRight="16dip"
-        android:paddingTop="100dip" >
-    </com.stv.launcher.launcher3widget.Workspace>
-    -->
 
     <com.stv.launcher.widget.FocusIndicatorView
         android:id="@+id/focus_indicator"

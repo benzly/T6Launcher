@@ -3,11 +3,13 @@ package com.stv.launcher.widget;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.letv.launcher.Launcher;
@@ -27,6 +29,7 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
 
     private boolean mHasOverlappingRendering = false;
     private TabContent mTabContent;
+    private HorizontalScrollView mContentScrollView;
     private Button mManagerBt;
     private Launcher mLauncher;
     private List<TabSpec> mTabSpecs = new ArrayList<TabSpec>(2);
@@ -45,11 +48,16 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
     public TabSpace(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        // tab scrollView
+        mContentScrollView = new HorizontalScrollView(context);
+        addView(mContentScrollView, new LayoutParams(800, LayoutParams.MATCH_PARENT));
+        mContentScrollView.setBackgroundColor(Color.WHITE);
+
         // tab content
         mTabContent = new TabContent(context);
         mTabContent.setOrientation(LinearLayout.HORIZONTAL);
-        FrameLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        addView(mTabContent, params);
+        mContentScrollView.addView(mTabContent, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+        mTabContent.setBackgroundColor(Color.YELLOW);
 
         // manager button
         mManagerBt = new Button(context);
@@ -129,7 +137,7 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
     }
 
     private View createTabView(TabSpec tabSpec) {
-        Button textView = new Button(getContext());
+        TabItem textView = new TabItem(getContext());
         textView.setOnFocusChangeListener(this);
         textView.setOnClickListener(this);
         textView.setSelectAllOnFocus(true);
@@ -143,6 +151,21 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         params.gravity = Gravity.CENTER;
         textView.setLayoutParams(params);
         return textView;
+    }
+
+    private class TabItem extends FocusProcessButton {
+
+        public TabItem(Context context) {
+            this(context, null);
+        }
+
+        public TabItem(Context context, AttributeSet attrs) {
+            this(context, attrs, android.R.attr.buttonStyle);
+        }
+
+        public TabItem(Context context, AttributeSet attrs, int defStyleAttr) {
+            super(context, attrs, defStyleAttr);
+        }
     }
 
     @Override

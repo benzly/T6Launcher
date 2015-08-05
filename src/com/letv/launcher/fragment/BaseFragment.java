@@ -12,17 +12,20 @@ import java.util.ArrayList;
 
 public abstract class BaseFragment extends Fragment {
 
-    protected abstract View onInflaterView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
+    /** create fragment view */
+    protected abstract View onInflaterContent(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
-    protected abstract void onFragmentShowChange(boolean isShow);
-
-    protected abstract void asyncGetData();
+    protected abstract void onFragmentShowChanged(boolean gainShow);
 
     protected abstract void bindData(ArrayList<ItemInfo> items);
 
+    protected abstract void asyncGetData();
+
+    protected abstract void release();
+
     protected String tag;
 
-    protected View mRootView;
+    protected View mContentView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,21 +34,27 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mRootView == null) {
-            mRootView = onInflaterView(inflater, container, savedInstanceState);
+        if (mContentView == null) {
+            mContentView = onInflaterContent(inflater, container, savedInstanceState);
         }
-        return mRootView;
+        return mContentView;
     }
 
     @Override
     public final void onDestroyView() {
         super.onDestroyView();
-        if (mRootView != null) {
-            ViewGroup parent = (ViewGroup) mRootView.getParent();
+        if (mContentView != null) {
+            ViewGroup parent = (ViewGroup) mContentView.getParent();
             if (parent != null) {
-                parent.removeView(mRootView);
+                parent.removeView(mContentView);
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        release();
     }
 
 }
