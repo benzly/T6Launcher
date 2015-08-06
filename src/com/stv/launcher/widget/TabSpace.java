@@ -145,7 +145,8 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         textView.setTextSize(30);
         textView.setText(tabSpec.tag);
         textView.setTag(tabSpec);
-        textView.setTextColor(R.drawable.temp_text_selector);
+        textView.setBackground(getResources().getDrawable(R.drawable.temp_text_selector));
+        // textView.setTextColor(R.drawable.temp_text_selector);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 100);
         params.setMargins(20, 0, 20, 0);
         params.gravity = Gravity.CENTER;
@@ -160,7 +161,7 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         }
 
         public TabItem(Context context, AttributeSet attrs) {
-            this(context, attrs, android.R.attr.buttonStyle);
+            this(context, attrs, 0);
         }
 
         public TabItem(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -301,7 +302,7 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
 
         public void setCurrentTab(int i) {
             if (getChildCount() > i) {
-                getChildAt(i).requestFocus();
+                getChildAt(i).setSelected(true);
             }
         }
     }

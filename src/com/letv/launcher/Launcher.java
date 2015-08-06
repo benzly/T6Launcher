@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
-import com.letv.launcher.fragment.EmptyFragment;
-import com.letv.launcher.fragment.SpaceAdapter;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
+import com.stv.launcher.fragment.EmptyFragment;
+import com.stv.launcher.fragment.SearchFragment;
+import com.stv.launcher.fragment.SpaceAdapter;
 import com.stv.launcher.widget.FocusIndicatorView;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.TabSpace;
@@ -91,6 +93,11 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
         }
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        boolean handled = mMetroSpace.priorityAccessKeyEvent(event);
+        return handled ? true : super.dispatchKeyEvent(event);
+    }
 
     public void debug() {
         mSpaceAdapter.removeTab(mTabSpace.getTagByTab(0));
@@ -108,10 +115,17 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
             mScreens.clear();
             mScreens.addAll(orderedScreens);
 
+            int i = 0;
             for (ScreenInfo screen : orderedScreens) {
-                mSpaceAdapter.addTab(screen.name, EmptyFragment.class, null);
+                if (i == 0 || i == 2) {
+                    mSpaceAdapter.addTab(screen.name, SearchFragment.class, null);
+                } else {
+                    mSpaceAdapter.addTab(screen.name, EmptyFragment.class, null);
+                }
+                i++;
             }
-            mTabSpace.setCurrentTab(2);
+
+            mTabSpace.setCurrentTab(0);
         }
     }
 

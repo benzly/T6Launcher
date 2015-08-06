@@ -8,6 +8,8 @@ import android.view.animation.Interpolator;
 import android.widget.HorizontalScrollView;
 import android.widget.Scroller;
 
+import com.stv.launcher.fragment.SpaceAdapter;
+
 import java.lang.reflect.Field;
 
 public class MetroViewPager extends ViewPager {
@@ -43,7 +45,7 @@ public class MetroViewPager extends ViewPager {
     }
 
     @Override
-    public MetroViewPagerAdapter getAdapter() {
-        return (MetroViewPagerAdapter) super.getAdapter();
+    public SpaceAdapter getAdapter() {
+        return (SpaceAdapter) super.getAdapter();
     }
 }

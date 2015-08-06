@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="tab_text_normal">#000000</color>
+    <color name="tab_text_focus">#3FFFFFFF</color>
+    <color name="tab_text_select">#889900</color>
+    <color name="menu_text_select">#0cbcf7</color>
+
+</resources>

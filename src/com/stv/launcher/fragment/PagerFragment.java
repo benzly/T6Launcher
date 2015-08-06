@@ -1,6 +1,5 @@
-package com.letv.launcher.fragment;
+package com.stv.launcher.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import com.letv.launcher.ItemInfo;
 
 import java.util.ArrayList;
 
-public abstract class BaseFragment extends Fragment {
+public abstract class PagerFragment extends BaseFragment {
 
     /** create fragment view */
     protected abstract View onInflaterContent(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
@@ -18,8 +17,6 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void onFragmentShowChanged(boolean gainShow);
 
     protected abstract void bindData(ArrayList<ItemInfo> items);
-
-    protected abstract void asyncGetData();
 
     protected abstract void release();
 

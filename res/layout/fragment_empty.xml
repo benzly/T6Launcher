@@ -1,38 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.stv.launcher.widget.EmptyFragmentContent xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:id="@+id/content"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:focusable="true" >
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="100sp" />
-
-    <com.stv.launcher.widget.AppIconDrawer
-        android:id="@+id/icon1"
-        android:layout_width="500px"
-        android:layout_height="300px"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:focusable="true" />
-
-    <com.stv.launcher.widget.AppIconDrawer
-        android:id="@+id/icon2"
-        android:layout_width="500px"
-        android:layout_height="300px"
-        android:layout_centerInParent="true"
-        android:focusable="true" />
-
-    <com.stv.launcher.widget.AppIconDrawer
-        android:id="@+id/icon3"
-        android:layout_width="500px"
-        android:layout_height="300px"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:focusable="true" />
-
-</RelativeLayout>
+</com.stv.launcher.widget.EmptyFragmentContent>

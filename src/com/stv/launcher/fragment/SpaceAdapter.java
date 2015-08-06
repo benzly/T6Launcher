@@ -1,4 +1,4 @@
-package com.letv.launcher.fragment;
+package com.stv.launcher.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.letv.launcher.ItemInfo;
 import com.letv.launcher.v4fragment.FragmentStatePagerAdapter;
-import com.letv.lejianplugin.PluginManager;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.MetroViewPager;
 import com.stv.launcher.widget.TabSpace;
@@ -24,25 +23,20 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
     Context context;
     TabSpace tabSpace;
     MetroSpace metroSpace;
+    int mCurrentTab = -1;
     ArrayList<TabInfo> tabs = new ArrayList<SpaceAdapter.TabInfo>();
 
     private class TabInfo {
         String tag;
         Class<?> clss;
         Bundle args;
-        Fragment fragment;
+        BaseFragment fragment;
 
         TabInfo(String tag, Class<?> _class, Bundle args) {
             this.tag = tag;
             this.clss = _class;
             this.args = args;
-
-            if (tag.equals("乐见")) {
-                this.fragment = PluginManager.createFragment();
-            } else {
-                this.fragment = (BaseFragment) Fragment.instantiate(context, clss.getName());
-                ((BaseFragment) this.fragment).tag = tag;
-            }
+            this.fragment = (BaseFragment) Fragment.instantiate(context, clss.getName());
         }
     }
 
@@ -88,20 +82,18 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
 
     public void bindTabItems(int tab, ArrayList<ItemInfo> items) {
         TabInfo tabInfo = tabs.get(tab);
-        // tabInfo.fragment.bindData(items);
+        if (tabInfo.fragment instanceof PagerFragment) {
+            ((PagerFragment) tabInfo.fragment).bindData(items);
+        }
     }
 
     @Override
     public void onTabChanged(String tabId) {
-        int position = tabSpace.getCurrentTab();
-        Log.d(TAG, "onTabChanged " + tabId + " " + position);
-        metroSpace.getViewPager().setCurrentItem(position);
+        mCurrentTab = tabSpace.getCurrentTab();
+        Log.d(TAG, "onTabChanged " + tabId + " " + mCurrentTab);
+        metroSpace.getViewPager().setCurrentItem(mCurrentTab);
         for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(position).fragment instanceof BaseFragment) {
-                ((BaseFragment) tabs.get(position).fragment).onFragmentShowChanged(position == i);
-            } else {
-                PluginManager.setVisible(tabs.get(position).fragment, position == i);
-            }
+            ((PagerFragment) tabs.get(mCurrentTab).fragment).onFragmentShowChanged(mCurrentTab == i);
         }
     }
 
@@ -109,6 +101,13 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
     public Fragment getItem(int position) {
         TabInfo info = tabs.get(position);
         return info.fragment;
+    }
+
+    public BaseFragment getCurrentFragment() {
+        if (mCurrentTab > 0 && mCurrentTab < tabs.size()) {
+            return tabs.get(mCurrentTab).fragment;
+        }
+        return null;
     }
 
     @Override
@@ -123,9 +122,14 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
     }
 
     @Override
-    public void onPageSelected(int position) {
-        ViewGroup root = (ViewGroup) tabSpace.getParent();
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+    }
 
+    @Override
+    public void onPageSelected(int position) {
+        Log.d(TAG, "onPageSelected " + position);
+        ViewGroup root = (ViewGroup) tabSpace.getParent();
         int oldFocusability = root.getDescendantFocusability();
         root.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         tabSpace.setCurrentTab(position);
