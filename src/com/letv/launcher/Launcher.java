@@ -10,7 +10,7 @@ import android.view.View;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.fragment.EmptyFragment;
-import com.stv.launcher.fragment.LivePagerController;
+import com.stv.launcher.fragment.LiveFragment;
 import com.stv.launcher.fragment.SearchFragment;
 import com.stv.launcher.fragment.SpaceAdapter;
 import com.stv.launcher.widget.MetroSpace;
@@ -85,7 +85,7 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
             // need add
             for (ScreenInfo info : ScreenManagerActivity.sBeAdded) {
                 mScreens.add(info);
-                mSpaceAdapter.addTab(info.name, SearchFragment.class, null);
+                mSpaceAdapter.addTab(info.name, EmptyFragment.class, null);
             }
         }
     }
@@ -115,10 +115,7 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
             int i = 0;
             for (ScreenInfo screen : orderedScreens) {
                 if (i == 0) {
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.live_content_parent, LivePagerController.getInstance(getApplicationContext()).getLiveFragment())
-                            .commit();
-                    mSpaceAdapter.addTab(screen.name, EmptyFragment.class, null);
+                    mSpaceAdapter.addTab(screen.name, LiveFragment.class, null);
                 } else {
                     mSpaceAdapter.addTab(screen.name, SearchFragment.class, null);
                 }

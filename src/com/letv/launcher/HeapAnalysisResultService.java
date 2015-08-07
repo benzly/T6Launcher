@@ -1,7 +1,5 @@
 package com.letv.launcher;
 
-import static com.squareup.leakcanary.LeakCanary.leakInfo;
-
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -18,10 +16,10 @@ public class HeapAnalysisResultService extends AbstractAnalysisResultService {
     @Override
     protected void onHeapAnalyzed(HeapDump heapDump, AnalysisResult result) {
         String leakInfo = leakInfo(this, heapDump, result);
-        Log.d("T2LeakCanary", "\n");
-        Log.d("T2LeakCanary", "---------------------------result---------------------------");
-        Log.d("T2LeakCanary", leakInfo);
-        Log.d("T2LeakCanary", "------------------------------------------------------------");
+        Log.d("LeakCanary", "\n");
+        Log.d("LeakCanary", "---------------------------result---------------------------");
+        Log.d("LeakCanary", leakInfo);
+        Log.d("LeakCanary", "------------------------------------------------------------");
     }
 
     public static String leakInfo(Context context, HeapDump heapDump, AnalysisResult result) {
