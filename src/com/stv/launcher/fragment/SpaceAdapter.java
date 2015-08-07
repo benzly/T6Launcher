@@ -53,6 +53,62 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         tabSpace.setOnTabChangedListener(this);
     }
 
+    @Override
+    public void onTabChanged(String tabId) {
+        Log.d(TAG, "onTabChanged " + tabId);
+        mCurrentTab = tabSpace.getCurrentTab();
+        metroSpace.getViewPager().setCurrentItem(mCurrentTab);
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        TabInfo info = tabs.get(position);
+        return info.fragment;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        // In order to dynamically delete
+        return PagerAdapter.POSITION_NONE;
+    }
+
+    @Override
+    public int getCount() {
+        return tabs.size();
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        final boolean pagerActive = metroSpace.getViewPager().hasFocus();
+        final boolean switchLeft = mCurrentTab > position;
+        mCurrentTab = position;
+        Log.d(TAG, "onPageSelected=" + position + "  pagerActive=" + pagerActive + "  switchLeft=" + switchLeft);
+
+        final BaseFragment fragment = getCurrentFragment();
+        for (TabInfo item : tabs) {
+            if (item.fragment == fragment) {
+                item.fragment.onFragmentShowChanged(true);
+            } else {
+                item.fragment.onFragmentShowChanged(false);
+            }
+        }
+        if (pagerActive) {
+            fragment.onFocusRequested(switchLeft ? BaseFragment.FOCUS_RIGHT_IN : BaseFragment.FOCUS_LEFT_IN);
+            tabSpace.setSelection(mCurrentTab);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int arg0) {}
+
+    @Override
+    public void onPageScrolled(int arg0, float arg1, int arg2) {}
+
     public void addTab(String tabName, Class<?> clss, Bundle args) {
         Log.d(TAG, "addTab " + tabName);
         TabSpace.TabSpec tabSpec = tabSpace.newTabSpec(tabName);
@@ -87,59 +143,18 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         }
     }
 
-    @Override
-    public void onTabChanged(String tabId) {
-        mCurrentTab = tabSpace.getCurrentTab();
-        Log.d(TAG, "onTabChanged " + tabId + " " + mCurrentTab);
-        metroSpace.getViewPager().setCurrentItem(mCurrentTab);
-        for (int i = 0; i < tabs.size(); i++) {
-            ((PagerFragment) tabs.get(mCurrentTab).fragment).onFragmentShowChanged(mCurrentTab == i);
-        }
-    }
-
-    @Override
-    public Fragment getItem(int position) {
-        TabInfo info = tabs.get(position);
-        return info.fragment;
+    public void setCurrentTab(int tab) {
+        tabSpace.setCurrentTab(tab);
     }
 
     public BaseFragment getCurrentFragment() {
-        if (mCurrentTab > 0 && mCurrentTab < tabs.size()) {
+        if (mCurrentTab >= 0 && mCurrentTab < tabs.size()) {
             return tabs.get(mCurrentTab).fragment;
         }
         return null;
     }
 
-    @Override
-    public int getItemPosition(Object object) {
-        // In order to dynamically delete
-        return PagerAdapter.POSITION_NONE;
+    public TabSpace getTabSpace() {
+        return tabSpace;
     }
-
-    @Override
-    public int getCount() {
-        return tabs.size();
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        super.destroyItem(container, position, object);
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        Log.d(TAG, "onPageSelected " + position);
-        ViewGroup root = (ViewGroup) tabSpace.getParent();
-        int oldFocusability = root.getDescendantFocusability();
-        root.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        tabSpace.setCurrentTab(position);
-        root.setDescendantFocusability(oldFocusability);
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int arg0) {}
-
-    @Override
-    public void onPageScrolled(int arg0, float arg1, int arg2) {}
-
 }

@@ -10,9 +10,9 @@ import android.view.View;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.fragment.EmptyFragment;
+import com.stv.launcher.fragment.LivePagerController;
 import com.stv.launcher.fragment.SearchFragment;
 import com.stv.launcher.fragment.SpaceAdapter;
-import com.stv.launcher.widget.FocusIndicatorView;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.TabSpace;
 
@@ -29,7 +29,6 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
     private TabSpace mTabSpace;
     private MetroSpace mMetroSpace;
     private SpaceAdapter mSpaceAdapter;
-    private FocusIndicatorView mFocusIndicatorView;
 
     public ArrayList<ScreenInfo> mScreens = new ArrayList<ScreenInfo>();
 
@@ -50,8 +49,6 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
     }
 
     private void setupViews() {
-        mFocusIndicatorView = (FocusIndicatorView) findViewById(R.id.focus_indicator);
-
         mTabSpace = (TabSpace) findViewById(R.id.tabspace);
         mMetroSpace = (MetroSpace) findViewById(R.id.metro_space);
         mTabSpace.setLauncher(this);
@@ -88,7 +85,7 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
             // need add
             for (ScreenInfo info : ScreenManagerActivity.sBeAdded) {
                 mScreens.add(info);
-                mSpaceAdapter.addTab(info.name, EmptyFragment.class, null);
+                mSpaceAdapter.addTab(info.name, SearchFragment.class, null);
             }
         }
     }
@@ -117,15 +114,17 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
 
             int i = 0;
             for (ScreenInfo screen : orderedScreens) {
-                if (i == 0 || i == 2) {
-                    mSpaceAdapter.addTab(screen.name, SearchFragment.class, null);
-                } else {
+                if (i == 0) {
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.live_content_parent, LivePagerController.getInstance(getApplicationContext()).getLiveFragment())
+                            .commit();
                     mSpaceAdapter.addTab(screen.name, EmptyFragment.class, null);
+                } else {
+                    mSpaceAdapter.addTab(screen.name, SearchFragment.class, null);
                 }
                 i++;
             }
-
-            mTabSpace.setCurrentTab(0);
+            mTabSpace.setCurrentTab(1);
         }
     }
 

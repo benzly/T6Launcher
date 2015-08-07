@@ -1,7 +1,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:focusable="false" >
+
+    <FrameLayout
+        android:id="@+id/live_content_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <com.stv.launcher.widget.TabSpace
         android:id="@+id/tabspace"
@@ -13,13 +20,7 @@
         android:id="@+id/metro_space"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tabspace"
-        android:background="@drawable/workspace_bg" >
+        android:layout_below="@id/tabspace" >
     </com.stv.launcher.widget.MetroSpace>
-
-    <com.stv.launcher.widget.FocusIndicatorView
-        android:id="@+id/focus_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </RelativeLayout>

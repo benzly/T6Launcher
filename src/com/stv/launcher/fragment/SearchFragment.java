@@ -45,20 +45,20 @@ public class SearchFragment extends PagerFragment {
     }
 
     @Override
-    public boolean handleKeyEvent(KeyEvent event) {
+    public boolean priorityAccessKeyEvent(KeyEvent event) {
         int action = event.getAction();
         int keyCode = event.getKeyCode();
         if (action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
             Log.d(TAG, "handleKeyEvent right");
         }
-        return super.handleKeyEvent(event);
+        return super.priorityAccessKeyEvent(event);
     }
 
     @Override
-    public boolean focusIn(int direction) {
-        if (direction == View.FOCUS_LEFT) {
+    public boolean onFocusRequested(int requestDirection) {
+        if (requestDirection == FOCUS_LEFT_IN) {
             icon1.requestFocus();
-        } else if (direction == View.FOCUS_RIGHT) {
+        } else if (requestDirection == FOCUS_RIGHT_IN) {
             icon3.requestFocus();
         }
         return false;

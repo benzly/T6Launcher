@@ -1258,6 +1258,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         ArrayList<ScreenInfo> orderedScreens = new ArrayList<ScreenInfo>();
 
         // TODO debug data
+        orderedScreens.add(new ScreenInfo(0, "轮播", LayoutType.AUTOMATIC));
         orderedScreens.add(new ScreenInfo(0, "视频", LayoutType.AUTOMATIC));
         orderedScreens.add(new ScreenInfo(1, "搜索", LayoutType.MANUAL));
         orderedScreens.add(new ScreenInfo(2, "应用", LayoutType.AUTOMATIC));

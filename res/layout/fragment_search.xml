@@ -34,4 +34,12 @@
         android:layout_centerVertical="true"
         android:focusable="true" />
 
+    <com.stv.launcher.widget.AppIconDrawer
+        android:id="@+id/icon4"
+        android:layout_width="500px"
+        android:layout_height="300px"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:focusable="true" />
+
 </com.stv.launcher.widget.PagerContainer>

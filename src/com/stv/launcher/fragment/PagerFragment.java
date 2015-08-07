@@ -14,8 +14,6 @@ public abstract class PagerFragment extends BaseFragment {
     /** create fragment view */
     protected abstract View onInflaterContent(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
-    protected abstract void onFragmentShowChanged(boolean gainShow);
-
     protected abstract void bindData(ArrayList<ItemInfo> items);
 
     protected abstract void release();

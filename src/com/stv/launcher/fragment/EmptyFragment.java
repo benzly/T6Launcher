@@ -1,5 +1,6 @@
 package com.stv.launcher.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,17 @@ import java.util.ArrayList;
 public class EmptyFragment extends PagerFragment {
 
     private static final String TAG = EmptyFragment.class.getSimpleName();
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        LivePagerController.getInstance(activity);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,14 +50,15 @@ public class EmptyFragment extends PagerFragment {
 
     @Override
     public void onFragmentShowChanged(boolean gainShow) {
+        LivePagerController.getInstance(getActivity()).onFragmentShowChanged(gainShow);
         if (gainShow) {
             Log.d(TAG, tag + " is show ------");
         }
     }
 
     @Override
-    public boolean focusIn(int direction) {
-        // TODO Auto-generated method stub
+    protected boolean onFocusRequested(int requestDirection) {
         return false;
     }
+
 }

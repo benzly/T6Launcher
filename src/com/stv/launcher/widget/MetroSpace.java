@@ -36,7 +36,6 @@ public class MetroSpace extends FrameLayout {
         super(context, attrs, defStyleAttr);
         mViewPager = new MetroViewPager(getContext());
         mViewPager.setId(DEFAULT_VIEWPAGER_ID);
-        // mViewPager.setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         mViewPager.setFocusable(false);
         addView(mViewPager);
     }
@@ -52,7 +51,17 @@ public class MetroSpace extends FrameLayout {
 
     public boolean priorityAccessKeyEvent(KeyEvent event) {
         BaseFragment current = mViewPager.getAdapter().getCurrentFragment();
-        return current != null ? current.handleKeyEvent(event) : false;
+        if (current != null) {
+            if (!current.priorityAccessKeyEvent(event)) {
+                int action = event.getAction();
+                int keyCode = event.getKeyCode();
+                if (action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    mViewPager.getAdapter().getTabSpace().requestLastFocus();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static ArrayList<ScreenInfo> getDifference(ArrayList<ScreenInfo> old, ArrayList<ScreenInfo> cur) {

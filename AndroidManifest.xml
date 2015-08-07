@@ -41,6 +41,12 @@
             android:screenOrientation="landscape" >
         </activity>
 
+        <service
+            android:name="com.squareup.leakcanary.internal.HeapAnalyzerService"
+            android:process=":leakcanary_jar" />
+        <service android:name="com.letv.launcher.HeapAnalysisResultService" >
+        </service>
+
         <provider
             android:name="com.stv.launcher.provider.LauncherProvider"
             android:authorities="com.letv.launcher.settings"
