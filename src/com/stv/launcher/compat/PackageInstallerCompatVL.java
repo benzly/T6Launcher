@@ -14,6 +14,9 @@
 
 package com.stv.launcher.compat;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import android.content.Context;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageInstaller.SessionCallback;
@@ -22,11 +25,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.letv.launcher.LauncherAppState;
+import com.letv.launcher.LauncherState;
 import com.stv.launcher.utils.IconCache;
-
-import java.util.ArrayList;
-import java.util.HashSet;
 
 public class PackageInstallerCompatVL extends PackageInstallerCompat implements Runnable {
 
@@ -46,8 +46,8 @@ public class PackageInstallerCompatVL extends PackageInstallerCompat implements 
 
     PackageInstallerCompatVL(Context context) {
         mInstaller = context.getPackageManager().getPackageInstaller();
-        LauncherAppState.setApplicationContext(context.getApplicationContext());
-        mCache = LauncherAppState.getInstance().getIconCache();
+        LauncherState.setApplicationContext(context.getApplicationContext());
+        mCache = LauncherState.getInstance().getIconCache();
         mWorker = new Handler();
 
         mResumed = false;
@@ -131,7 +131,7 @@ public class PackageInstallerCompatVL extends PackageInstallerCompat implements 
             return;
         }
 
-        LauncherAppState app = LauncherAppState.getInstanceNoCreate();
+        LauncherState app = LauncherState.getInstanceNoCreate();
         if (app == null) {
             // Try again later
             if (DEBUG) Log.d(TAG, "app is null, delaying send");

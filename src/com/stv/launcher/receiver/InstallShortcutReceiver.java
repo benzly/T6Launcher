@@ -12,7 +12,18 @@
  * the License.
  */
 
-package com.letv.launcher;
+package com.stv.launcher.receiver;
+
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,21 +37,16 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.letv.launcher.LauncherModel;
+import com.letv.launcher.LauncherState;
+import com.stv.launcher.app.AppInfo;
+import com.stv.launcher.app.AppSettings;
+import com.stv.launcher.app.ItemInfo;
+import com.stv.launcher.app.ShortcutInfo;
 import com.stv.launcher.compat.LauncherActivityInfoCompat;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONTokener;
-
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class InstallShortcutReceiver extends BroadcastReceiver {
     private static final String TAG = "InstallShortcutReceiver";
@@ -85,7 +91,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         if (packageNames.isEmpty()) {
             return;
         }
-        String spKey = LauncherAppState.getSharedPreferencesKey();
+        String spKey = LauncherState.getSharedPreferencesKey();
         SharedPreferences sp = context.getSharedPreferences(spKey, Context.MODE_PRIVATE);
         synchronized (sLock) {
             Set<String> strings = sp.getStringSet(APPS_PENDING_INSTALL, null);
@@ -141,17 +147,17 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         queuePendingShortcutInfo(info, context);
     }
 
-    static void queueInstallShortcut(LauncherActivityInfoCompat info, Context context) {
+    public static void queueInstallShortcut(LauncherActivityInfoCompat info, Context context) {
         queuePendingShortcutInfo(new PendingInstallShortcutInfo(info, context), context);
     }
 
     private static void queuePendingShortcutInfo(PendingInstallShortcutInfo info, Context context) {
         // Queue the item up for adding if launcher has not loaded properly yet
-        LauncherAppState.setApplicationContext(context.getApplicationContext());
-        LauncherAppState app = LauncherAppState.getInstance();
+        LauncherState.setApplicationContext(context.getApplicationContext());
+        LauncherState app = LauncherState.getInstance();
         boolean launcherNotLoaded = app.getModel().getCallback() == null;
 
-        String spKey = LauncherAppState.getSharedPreferencesKey();
+        String spKey = LauncherState.getSharedPreferencesKey();
         SharedPreferences sp = context.getSharedPreferences(spKey, Context.MODE_PRIVATE);
         addToInstallQueue(sp, info);
         if (!mUseInstallQueue && !launcherNotLoaded) {
@@ -169,7 +175,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
     }
 
     static void flushInstallQueue(Context context) {
-        String spKey = LauncherAppState.getSharedPreferencesKey();
+        String spKey = LauncherState.getSharedPreferencesKey();
         SharedPreferences sp = context.getSharedPreferences(spKey, Context.MODE_PRIVATE);
         ArrayList<PendingInstallShortcutInfo> installQueue = getAndClearInstallQueue(sp, context);
         if (!installQueue.isEmpty()) {
@@ -179,7 +185,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                 final PendingInstallShortcutInfo pendingInfo = iter.next();
                 final Intent intent = pendingInfo.launchIntent;
 
-                if (LauncherAppState.isDisableAllApps() && !isValidShortcutLaunchIntent(intent)) {
+                if (LauncherState.isDisableAllApps() && !isValidShortcutLaunchIntent(intent)) {
                     if (DBG) Log.d(TAG, "Ignoring shortcut with launchIntent:" + intent);
                     continue;
                 }
@@ -203,7 +209,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
 
             // Add the new apps to the model and bind them
             if (!addShortcuts.isEmpty()) {
-                LauncherAppState app = LauncherAppState.getInstance();
+                LauncherState app = LauncherState.getInstance();
                 app.getModel().addAndBindAddedWorkspaceApps(context, addShortcuts);
             }
         }
@@ -335,12 +341,12 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                 info.contentDescription = label;
                 info.customIcon = false;
                 info.intent = launchIntent;
-                info.itemType = LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
+                info.itemType = AppSettings.Favorites.ITEM_TYPE_APPLICATION;
                 info.flags = AppInfo.initFlags(activityInfo);
                 info.firstInstallTime = activityInfo.getFirstInstallTime();
                 return info;
             } else {
-                return LauncherAppState.getInstance().getModel().infoFromShortcutIntent(mContext, data);
+                return LauncherState.getInstance().getModel().infoFromShortcutIntent(mContext, data);
             }
         }
 

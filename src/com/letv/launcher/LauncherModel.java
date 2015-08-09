@@ -1,5 +1,20 @@
 package com.letv.launcher;
 
+import java.lang.ref.WeakReference;
+import java.security.InvalidParameterException;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -30,32 +45,26 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
+import com.stv.launcher.activity.Launcher;
+import com.stv.launcher.app.AllAppsList;
+import com.stv.launcher.app.AppInfo;
+import com.stv.launcher.app.AppSettings;
+import com.stv.launcher.app.FolderInfo;
+import com.stv.launcher.app.ItemInfo;
+import com.stv.launcher.app.ShortcutInfo;
 import com.stv.launcher.compat.LauncherActivityInfoCompat;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.PackageInstallerCompat;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
+import com.stv.launcher.receiver.InstallShortcutReceiver;
+import com.stv.launcher.receiver.StartupReceiver;
 import com.stv.launcher.utils.AppFilter;
 import com.stv.launcher.utils.DeferredHandler;
 import com.stv.launcher.utils.IconCache;
 import com.stv.launcher.utils.Utilities;
 import com.stv.launcher.widget.MetroSpace;
-
-import java.lang.ref.WeakReference;
-import java.security.InvalidParameterException;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Maintains in-memory state of the Launcher. It is expected that there should be only one
@@ -79,7 +88,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
     private final boolean mAppsCanBeOnRemoveableStorage;
 
-    private final LauncherAppState mApp;
+    private final LauncherState mApp;
     private final Object mLock = new Object();
     private DeferredHandler mHandler = new DeferredHandler();
     private LoaderTask mLoaderTask;
@@ -198,7 +207,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         public boolean filterItem(ItemInfo parent, ItemInfo info, ComponentName cn);
     }
 
-    LauncherModel(LauncherAppState app, IconCache iconCache, AppFilter appFilter) {
+    LauncherModel(LauncherState app, IconCache iconCache, AppFilter appFilter) {
         Context context = app.getContext();
         mAppsCanBeOnRemoveableStorage = Environment.isExternalStorageRemovable();
         mApp = app;
@@ -243,7 +252,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     }
 
     static boolean findNextAvailableIconSpaceInScreen(ArrayList<ItemInfo> items, int[] xy, long screen) {
-        LauncherAppState app = LauncherAppState.getInstance();
+        LauncherState app = LauncherState.getInstance();
         DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
         final int xCount = (int) grid.numColumns;
         final int yCount = (int) grid.numRows;
@@ -252,7 +261,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         int cellX, cellY, spanX, spanY;
         for (int i = 0; i < items.size(); ++i) {
             final ItemInfo item = items.get(i);
-            if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
+            if (item.container == AppSettings.Favorites.CONTAINER_DESKTOP) {
                 if (item.screenId == screen) {
                     cellX = item.cellX;
                     cellY = item.cellY;
@@ -433,7 +442,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                         }
 
                         // Add the shortcut to the db
-                        addItemToDatabase(context, shortcutInfo, LauncherSettings.Favorites.CONTAINER_DESKTOP, coords.first,
+                        addItemToDatabase(context, shortcutInfo, AppSettings.Favorites.CONTAINER_DESKTOP, coords.first,
                                 coords.second[0], coords.second[1], false);
                         // Save the ShortcutInfo for binding in the workspace
                         addedShortcutsFinal.add(shortcutInfo);
@@ -573,7 +582,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
     static void updateItemInDatabaseHelper(Context context, final ContentValues values, final ItemInfo item, final String callingFunction) {
         final long itemId = item.id;
-        final Uri uri = LauncherSettings.Favorites.getContentUri(itemId, false);
+        final Uri uri = AppSettings.Favorites.getContentUri(itemId, false);
         final ContentResolver cr = context.getContentResolver();
 
         final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
@@ -598,7 +607,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 for (int i = 0; i < count; i++) {
                     ItemInfo item = items.get(i);
                     final long itemId = item.id;
-                    final Uri uri = LauncherSettings.Favorites.getContentUri(itemId, false);
+                    final Uri uri = AppSettings.Favorites.getContentUri(itemId, false);
                     ContentValues values = valuesList.get(i);
 
                     ops.add(ContentProviderOperation.newUpdate(uri).withValues(values).build());
@@ -621,8 +630,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         synchronized (sBgLock) {
             checkItemInfoLocked(itemId, item, stackTrace);
 
-            if (item.container != LauncherSettings.Favorites.CONTAINER_DESKTOP
-                    && item.container != LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+            if (item.container != AppSettings.Favorites.CONTAINER_DESKTOP
+                    && item.container != AppSettings.Favorites.CONTAINER_HOTSEAT) {
                 // Item is in a folder, make sure this folder exists
                 if (!sBgFolders.containsKey(item.container)) {
                     // An items container is being set to a that of an item which is not in
@@ -637,11 +646,11 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             // that are on the desktop, as appropriate
             ItemInfo modelItem = sBgItemsIdMap.get(itemId);
             if (modelItem != null
-                    && (modelItem.container == LauncherSettings.Favorites.CONTAINER_DESKTOP || modelItem.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT)) {
+                    && (modelItem.container == AppSettings.Favorites.CONTAINER_DESKTOP || modelItem.container == AppSettings.Favorites.CONTAINER_HOTSEAT)) {
                 switch (modelItem.itemType) {
-                    case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
-                    case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
-                    case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
+                    case AppSettings.Favorites.ITEM_TYPE_APPLICATION:
+                    case AppSettings.Favorites.ITEM_TYPE_SHORTCUT:
+                    case AppSettings.Favorites.ITEM_TYPE_FOLDER:
                         if (!sBgWorkspaceItems.contains(modelItem)) {
                             sBgWorkspaceItems.add(modelItem);
                         }
@@ -720,7 +729,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
      * Returns true if the shortcuts already exists in the database. we identify a shortcut by its
      * title and intent.
      */
-    static boolean shortcutExists(Context context, String title, Intent intent, UserHandleCompat user) {
+    public static boolean shortcutExists(Context context, String title, Intent intent, UserHandleCompat user) {
         final ContentResolver cr = context.getContentResolver();
         final Intent intentWithPkg, intentWithoutPkg;
 
@@ -740,7 +749,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         }
         String userSerial = Long.toString(UserManagerCompat.getInstance(context).getSerialNumberForUser(user));
         Cursor c =
-                cr.query(LauncherSettings.Favorites.CONTENT_URI, new String[] {"title", "intent", "profileId"},
+                cr.query(AppSettings.Favorites.CONTENT_URI, new String[] {"title", "intent", "profileId"},
                         "title=? and (intent=? or intent=?) and profileId=?",
                         new String[] {title, intentWithPkg.toUri(0), intentWithoutPkg.toUri(0), userSerial}, null);
         try {
@@ -758,19 +767,19 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         ArrayList<ItemInfo> items = new ArrayList<ItemInfo>();
         final ContentResolver cr = context.getContentResolver();
         Cursor c =
-                cr.query(LauncherSettings.Favorites.CONTENT_URI, new String[] {LauncherSettings.Favorites.ITEM_TYPE,
-                        LauncherSettings.Favorites.CONTAINER, LauncherSettings.Favorites.SCREEN, LauncherSettings.Favorites.CELLX,
-                        LauncherSettings.Favorites.CELLY, LauncherSettings.Favorites.SPANX, LauncherSettings.Favorites.SPANY,
-                        LauncherSettings.Favorites.PROFILE_ID}, null, null, null);
+                cr.query(AppSettings.Favorites.CONTENT_URI, new String[] {AppSettings.Favorites.ITEM_TYPE,
+                        AppSettings.Favorites.CONTAINER, AppSettings.Favorites.SCREEN, AppSettings.Favorites.CELLX,
+                        AppSettings.Favorites.CELLY, AppSettings.Favorites.SPANX, AppSettings.Favorites.SPANY,
+                        AppSettings.Favorites.PROFILE_ID}, null, null, null);
 
-        final int itemTypeIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.ITEM_TYPE);
-        final int containerIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CONTAINER);
-        final int screenIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.SCREEN);
-        final int cellXIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLX);
-        final int cellYIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLY);
-        final int spanXIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.SPANX);
-        final int spanYIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.SPANY);
-        final int profileIdIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.PROFILE_ID);
+        final int itemTypeIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.ITEM_TYPE);
+        final int containerIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.CONTAINER);
+        final int screenIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.SCREEN);
+        final int cellXIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.CELLX);
+        final int cellYIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.CELLY);
+        final int spanXIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.SPANX);
+        final int spanYIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.SPANY);
+        final int profileIdIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.PROFILE_ID);
         UserManagerCompat userManager = UserManagerCompat.getInstance(context);
         try {
             while (c.moveToNext()) {
@@ -804,21 +813,21 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     FolderInfo getFolderById(Context context, HashMap<Long, FolderInfo> folderList, long id) {
         final ContentResolver cr = context.getContentResolver();
         Cursor c =
-                cr.query(LauncherSettings.Favorites.CONTENT_URI, null, "_id=? and (itemType=? or itemType=?)",
-                        new String[] {String.valueOf(id), String.valueOf(LauncherSettings.Favorites.ITEM_TYPE_FOLDER)}, null);
+                cr.query(AppSettings.Favorites.CONTENT_URI, null, "_id=? and (itemType=? or itemType=?)",
+                        new String[] {String.valueOf(id), String.valueOf(AppSettings.Favorites.ITEM_TYPE_FOLDER)}, null);
 
         try {
             if (c.moveToFirst()) {
-                final int itemTypeIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.ITEM_TYPE);
-                final int titleIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.TITLE);
-                final int containerIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CONTAINER);
-                final int screenIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.SCREEN);
-                final int cellXIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLX);
-                final int cellYIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CELLY);
+                final int itemTypeIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.ITEM_TYPE);
+                final int titleIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.TITLE);
+                final int containerIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.CONTAINER);
+                final int screenIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.SCREEN);
+                final int cellXIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.CELLX);
+                final int cellYIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.CELLY);
 
                 FolderInfo folderInfo = null;
                 switch (c.getInt(itemTypeIndex)) {
-                    case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
+                    case AppSettings.Favorites.ITEM_TYPE_FOLDER:
                         folderInfo = findOrMakeFolder(folderList, id);
                         break;
                 }
@@ -856,26 +865,26 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
         // TODO
         // item.id = LauncherAppState.getLauncherProvider().generateNewItemId();
-        values.put(LauncherSettings.Favorites._ID, item.id);
+        values.put(AppSettings.Favorites._ID, item.id);
         item.updateValuesWithCoordinates(values, item.cellX, item.cellY);
 
         final StackTraceElement[] stackTrace = new Throwable().getStackTrace();
         Runnable r = new Runnable() {
             public void run() {
-                cr.insert(notify ? LauncherSettings.Favorites.CONTENT_URI : LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, values);
+                cr.insert(notify ? AppSettings.Favorites.CONTENT_URI : AppSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, values);
 
                 // Lock on mBgLock *after* the db operation
                 synchronized (sBgLock) {
                     checkItemInfoLocked(item.id, item, stackTrace);
                     sBgItemsIdMap.put(item.id, item);
                     switch (item.itemType) {
-                        case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
+                        case AppSettings.Favorites.ITEM_TYPE_FOLDER:
                             sBgFolders.put(item.id, (FolderInfo) item);
                             // Fall through
-                        case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
-                        case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
-                            if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP
-                                    || item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+                        case AppSettings.Favorites.ITEM_TYPE_APPLICATION:
+                        case AppSettings.Favorites.ITEM_TYPE_SHORTCUT:
+                            if (item.container == AppSettings.Favorites.CONTAINER_DESKTOP
+                                    || item.container == AppSettings.Favorites.CONTAINER_HOTSEAT) {
                                 sBgWorkspaceItems.add(item);
                             } else {
                                 if (!sBgFolders.containsKey(item.container)) {
@@ -940,13 +949,13 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         Runnable r = new Runnable() {
             public void run() {
                 for (ItemInfo item : items) {
-                    final Uri uri = LauncherSettings.Favorites.getContentUri(item.id, false);
+                    final Uri uri = AppSettings.Favorites.getContentUri(item.id, false);
                     cr.delete(uri, null, null);
 
                     // Lock on mBgLock *after* the db operation
                     synchronized (sBgLock) {
                         switch (item.itemType) {
-                            case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
+                            case AppSettings.Favorites.ITEM_TYPE_FOLDER:
                                 sBgFolders.remove(item.id);
                                 for (ItemInfo info : sBgItemsIdMap.values()) {
                                     if (info.container == item.id) {
@@ -958,8 +967,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                                 }
                                 sBgWorkspaceItems.remove(item);
                                 break;
-                            case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
-                            case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+                            case AppSettings.Favorites.ITEM_TYPE_APPLICATION:
+                            case AppSettings.Favorites.ITEM_TYPE_SHORTCUT:
                                 sBgWorkspaceItems.remove(item);
                                 break;
                         }
@@ -984,7 +993,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
         final ArrayList<Long> screensCopy = new ArrayList<Long>(screens);
         final ContentResolver cr = context.getContentResolver();
-        final Uri uri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
+        final Uri uri = AppSettings.WorkspaceScreens.CONTENT_URI;
 
         // Remove any negative screen ids -- these aren't persisted
         Iterator<Long> iter = screensCopy.iterator();
@@ -1005,8 +1014,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 for (int i = 0; i < count; i++) {
                     ContentValues v = new ContentValues();
                     long screenId = screensCopy.get(i);
-                    v.put(LauncherSettings.WorkspaceScreens._ID, screenId);
-                    v.put(LauncherSettings.WorkspaceScreens.SCREEN_RANK, i);
+                    v.put(AppSettings.WorkspaceScreens._ID, screenId);
+                    v.put(AppSettings.WorkspaceScreens.SCREEN_RANK, i);
                     ops.add(ContentProviderOperation.newInsert(uri).withValues(v).build());
                 }
 
@@ -1034,7 +1043,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
         Runnable r = new Runnable() {
             public void run() {
-                cr.delete(LauncherSettings.Favorites.getContentUri(info.id, false), null, null);
+                cr.delete(AppSettings.Favorites.getContentUri(info.id, false), null, null);
                 // Lock on mBgLock *after* the db operation
                 synchronized (sBgLock) {
                     sBgItemsIdMap.remove(info.id);
@@ -1043,7 +1052,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     sBgWorkspaceItems.remove(info);
                 }
 
-                cr.delete(LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, LauncherSettings.Favorites.CONTAINER + "=" + info.id,
+                cr.delete(AppSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, AppSettings.Favorites.CONTAINER + "=" + info.id,
                         null);
                 // Lock on mBgLock *after* the db operation
                 synchronized (sBgLock) {
@@ -1253,17 +1262,17 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     /** Loads the workspace screens db into a map of Rank -> ScreenId */
     private static ArrayList<ScreenInfo> loadWorkspaceScreensDb(Context context) {
         final ContentResolver contentResolver = context.getContentResolver();
-        final Uri screensUri = LauncherSettings.WorkspaceScreens.CONTENT_URI;
+        final Uri screensUri = AppSettings.WorkspaceScreens.CONTENT_URI;
         final Cursor sc = contentResolver.query(screensUri, null, null, null, null);
         ArrayList<ScreenInfo> orderedScreens = new ArrayList<ScreenInfo>();
 
         // TODO debug data
-        orderedScreens.add(new ScreenInfo(0, "轮播", LayoutType.AUTOMATIC));
-        orderedScreens.add(new ScreenInfo(0, "视频", LayoutType.AUTOMATIC));
-        orderedScreens.add(new ScreenInfo(1, "搜索", LayoutType.MANUAL));
-        orderedScreens.add(new ScreenInfo(2, "应用", LayoutType.AUTOMATIC));
-        orderedScreens.add(new ScreenInfo(3, "发现", LayoutType.EMPTY));
-        orderedScreens.add(new ScreenInfo(4, "汽车", LayoutType.EMPTY));
+        orderedScreens.add(new ScreenInfo(0, "轮播"));
+        orderedScreens.add(new ScreenInfo(0, "视频"));
+        orderedScreens.add(new ScreenInfo(1, "搜索"));
+        orderedScreens.add(new ScreenInfo(2, "应用"));
+        orderedScreens.add(new ScreenInfo(3, "发现"));
+        orderedScreens.add(new ScreenInfo(4, "汽车"));
 
         return orderedScreens;
     }
@@ -1457,7 +1466,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 sBgDbIconCache.clear();
             }
 
-            if (LauncherAppState.isDisableAllApps()) {
+            if (LauncherState.isDisableAllApps()) {
                 // Ensure that all the applications that are in the system are
                 // represented on the home screen.
                 if (!UPGRADE_USE_MORE_APPS_FOLDER || !isUpgrade) {
@@ -1539,13 +1548,13 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
         // check & update map of what's occupied; used to discard overlapping/invalid items
         private boolean checkItemPlacement(HashMap<Long, ItemInfo[][]> occupied, ItemInfo item) {
-            LauncherAppState app = LauncherAppState.getInstance();
+            LauncherState app = LauncherState.getInstance();
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
             final int countX = (int) grid.numColumns;
             final int countY = (int) grid.numRows;
 
             long containerIndex = item.screenId;
-            if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+            if (item.container == AppSettings.Favorites.CONTAINER_HOTSEAT) {
                 // Return early if we detect that an item is under the hotseat button
                 if (mCallbacks == null || mCallbacks.get().isAllAppsButtonRank((int) item.screenId)) {
                     Log.e(TAG, "Error loading shortcut into hotseat " + item + " into position (" + item.screenId + ":" + item.cellX + ","
@@ -1553,13 +1562,13 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     return false;
                 }
 
-                final ItemInfo[][] hotseatItems = occupied.get((long) LauncherSettings.Favorites.CONTAINER_HOTSEAT);
+                final ItemInfo[][] hotseatItems = occupied.get((long) AppSettings.Favorites.CONTAINER_HOTSEAT);
 
                 if (hotseatItems != null) {
                     if (hotseatItems[(int) item.screenId][0] != null) {
                         Log.e(TAG, "Error loading shortcut into hotseat " + item + " into position (" + item.screenId + ":" + item.cellX
                                 + "," + item.cellY + ") occupied by "
-                                + occupied.get(LauncherSettings.Favorites.CONTAINER_HOTSEAT)[(int) item.screenId][0]);
+                                + occupied.get(AppSettings.Favorites.CONTAINER_HOTSEAT)[(int) item.screenId][0]);
                         return false;
                     } else {
                         hotseatItems[(int) item.screenId][0] = item;
@@ -1574,7 +1583,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
                     return true;
                 }
-            } else if (item.container != LauncherSettings.Favorites.CONTAINER_DESKTOP) {
+            } else if (item.container != AppSettings.Favorites.CONTAINER_DESKTOP) {
                 // Skip further checking if it is not the hotseat or workspace container
                 return true;
             }
@@ -1585,7 +1594,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             }
 
             final ItemInfo[][] screens = occupied.get(item.screenId);
-            if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP && item.cellX < 0 || item.cellY < 0
+            if (item.container == AppSettings.Favorites.CONTAINER_DESKTOP && item.cellX < 0 || item.cellY < 0
                     || item.cellX + item.spanX > countX || item.cellY + item.spanY > countY) {
                 Log.e(TAG, "Error loading shortcut " + item + " into cell (" + containerIndex + "-" + item.screenId + ":" + item.cellX
                         + "," + item.cellY + ") out of screen bounds ( " + countX + "x" + countY + ")");
@@ -1633,23 +1642,23 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             final LauncherAppsCompat launcherApps = LauncherAppsCompat.getInstance(context);
             final boolean isSdCardReady = context.registerReceiver(null, new IntentFilter(StartupReceiver.SYSTEM_READY)) != null;
 
-            LauncherAppState app = LauncherAppState.getInstance();
+            LauncherState app = LauncherState.getInstance();
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
             int countX = (int) grid.numColumns;
             int countY = (int) grid.numRows;
 
             if ((mFlags & LOADER_FLAG_CLEAR_WORKSPACE) != 0) {
-                LauncherAppState.getLauncherProvider().deleteDatabase();
+                LauncherState.getLauncherProvider().deleteDatabase();
             }
 
-            LauncherAppState.getLauncherProvider().loadDefaultFavoritesIfNecessary();
+            LauncherState.getLauncherProvider().loadDefaultFavoritesIfNecessary();
 
             synchronized (sBgLock) {
                 clearSBgDataStructures();
                 final HashSet<String> installingPkgs = PackageInstallerCompat.getInstance(mContext).updateAndGetActiveSessionCache();
 
                 final ArrayList<Long> itemsToRemove = new ArrayList<Long>();
-                final Uri contentUri = LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION;
+                final Uri contentUri = AppSettings.Favorites.CONTENT_URI_NO_NOTIFICATION;
                 if (DEBUG_LOADERS) Log.d(TAG, "loading model from " + contentUri);
 
                 // +1 for the hotseat (it can be larger than the workspace)
@@ -1701,14 +1710,14 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 }
             });
             for (ItemInfo info : allWorkspaceItems) {
-                if (info.container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
+                if (info.container == AppSettings.Favorites.CONTAINER_DESKTOP) {
                     if (info.screenId == currentScreenId) {
                         currentScreenItems.add(info);
                         itemsOnScreen.add(info.id);
                     } else {
                         otherScreenItems.add(info);
                     }
-                } else if (info.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
+                } else if (info.container == AppSettings.Favorites.CONTAINER_HOTSEAT) {
                     currentScreenItems.add(info);
                     itemsOnScreen.add(info.id);
                 } else {
@@ -1730,7 +1739,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 ItemInfo info = itemsIdMap.get(id);
                 FolderInfo folder = folders.get(id);
                 if (info == null || folder == null) continue;
-                if (info.container == LauncherSettings.Favorites.CONTAINER_DESKTOP && info.screenId == currentScreenId) {
+                if (info.container == AppSettings.Favorites.CONTAINER_DESKTOP && info.screenId == currentScreenId) {
                     currentScreenFolders.put(id, folder);
                 } else {
                     otherScreenFolders.put(id, folder);
@@ -1743,7 +1752,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
          * right)
          */
         private void sortWorkspaceItemsSpatially(ArrayList<ItemInfo> workspaceItems) {
-            final LauncherAppState app = LauncherAppState.getInstance();
+            final LauncherState app = LauncherState.getInstance();
             final DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
             // XXX: review this
             Collections.sort(workspaceItems, new Comparator<ItemInfo>() {
@@ -2023,7 +2032,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
             // Clear the list of apps
             mBgAllAppsList.clear();
-            SharedPreferences prefs = mContext.getSharedPreferences(LauncherAppState.getSharedPreferencesKey(), Context.MODE_PRIVATE);
+            SharedPreferences prefs = mContext.getSharedPreferences(LauncherState.getSharedPreferencesKey(), Context.MODE_PRIVATE);
             for (UserHandleCompat user : profiles) {
                 // Query for the set of apps
                 final long qiaTime = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;
@@ -2180,7 +2189,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     // Auto add shortcuts for added packages.
                     if (ADD_MANAGED_PROFILE_SHORTCUTS && !UserHandleCompat.myUserHandle().equals(mUser)) {
                         SharedPreferences prefs =
-                                context.getSharedPreferences(LauncherAppState.getSharedPreferencesKey(), Context.MODE_PRIVATE);
+                                context.getSharedPreferences(LauncherState.getSharedPreferencesKey(), Context.MODE_PRIVATE);
                         String shortcutsSetKey = INSTALLED_SHORTCUTS_SET_PREFIX + mUserManager.getSerialNumberForUser(mUser);
                         Set<String> shortcutSet = new HashSet<String>(prefs.getStringSet(shortcutsSetKey, Collections.EMPTY_SET));
 
@@ -2208,7 +2217,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     // will ensure that the shortcut when the app is installed again.
                     if (ADD_MANAGED_PROFILE_SHORTCUTS && !UserHandleCompat.myUserHandle().equals(mUser)) {
                         SharedPreferences prefs =
-                                context.getSharedPreferences(LauncherAppState.getSharedPreferencesKey(), Context.MODE_PRIVATE);
+                                context.getSharedPreferences(LauncherState.getSharedPreferencesKey(), Context.MODE_PRIVATE);
                         String shortcutsSetKey = INSTALLED_SHORTCUTS_SET_PREFIX + mUserManager.getSerialNumberForUser(mUser);
                         HashSet<String> shortcutSet = new HashSet<String>(prefs.getStringSet(shortcutsSetKey, Collections.EMPTY_SET));
                         shortcutSet.removeAll(Arrays.asList(mPackages));
@@ -2251,7 +2260,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
             if (added != null) {
                 // Ensure that we add all the workspace applications to the db
-                if (LauncherAppState.isDisableAllApps()) {
+                if (LauncherState.isDisableAllApps()) {
                     final ArrayList<ItemInfo> addedInfos = new ArrayList<ItemInfo>(added);
                     addAndBindAddedWorkspaceApps(context, addedInfos);
                 } else {
@@ -2344,7 +2353,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                                 }
 
                                 if (appInfo != null && Intent.ACTION_MAIN.equals(si.intent.getAction())
-                                        && si.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
+                                        && si.itemType == AppSettings.Favorites.ITEM_TYPE_APPLICATION) {
                                     si.updateIcon(mIconCache);
                                     si.title = appInfo.title.toString();
                                     si.contentDescription = appInfo.contentDescription;
@@ -2510,7 +2519,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         }
 
         info.contentDescription = mUserManager.getBadgedLabelForUser(info.title.toString(), info.user);
-        info.itemType = LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT;
+        info.itemType = AppSettings.Favorites.ITEM_TYPE_SHORTCUT;
         info.promisedIntent = intent;
         return info;
     }
@@ -2607,7 +2616,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         if (info.title == null) {
             info.title = componentName.getClassName();
         }
-        info.itemType = LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
+        info.itemType = AppSettings.Favorites.ITEM_TYPE_APPLICATION;
         info.user = user;
         info.contentDescription = mUserManager.getBadgedLabelForUser(info.title.toString(), info.user);
         return info;
@@ -2659,7 +2668,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         final ShortcutInfo info = new ShortcutInfo();
         // Non-app shortcuts are only supported for current user.
         info.user = UserHandleCompat.myUserHandle();
-        info.itemType = LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT;
+        info.itemType = AppSettings.Favorites.ITEM_TYPE_SHORTCUT;
 
         // TODO: If there's an explicit component and we can't install that, delete it.
 
@@ -2667,7 +2676,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
         int iconType = c.getInt(iconTypeIndex);
         switch (iconType) {
-            case LauncherSettings.Favorites.ICON_TYPE_RESOURCE:
+            case AppSettings.Favorites.ICON_TYPE_RESOURCE:
                 String packageName = c.getString(iconPackageIndex);
                 String resourceName = c.getString(iconResourceIndex);
                 info.customIcon = false;
@@ -2683,7 +2692,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     info.usingFallbackIcon = true;
                 }
                 break;
-            case LauncherSettings.Favorites.ICON_TYPE_BITMAP:
+            case AppSettings.Favorites.ICON_TYPE_BITMAP:
                 icon = getIconFromCursor(c, iconIndex, context);
                 if (icon == null) {
                     icon = mIconCache.getDefaultIcon(info.user);
@@ -2708,7 +2717,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         // suppress dead code warning
         final boolean debug = false;
         if (debug) {
-            Log.d(TAG, "getIconFromCursor app=" + c.getString(c.getColumnIndexOrThrow(LauncherSettings.Favorites.TITLE)));
+            Log.d(TAG, "getIconFromCursor app=" + c.getString(c.getColumnIndexOrThrow(AppSettings.Favorites.TITLE)));
         }
         byte[] data = c.getBlob(iconIndex);
         try {
@@ -2718,7 +2727,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         }
     }
 
-    ShortcutInfo infoFromShortcutIntent(Context context, Intent data) {
+    public ShortcutInfo infoFromShortcutIntent(Context context, Intent data) {
         Intent intent = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
         String name = data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME);
         Parcelable bitmap = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON);

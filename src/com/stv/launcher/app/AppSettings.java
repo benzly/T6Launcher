@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.letv.launcher;
+package com.stv.launcher.app;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -21,7 +21,7 @@ import android.provider.BaseColumns;
 /**
  * Settings related utilities.
  */
-public class LauncherSettings {
+public class AppSettings {
     /** Columns required on table staht will be subject to backup and restore. */
     static interface ChangeLogColumns extends BaseColumns {
         /**
@@ -33,7 +33,7 @@ public class LauncherSettings {
         static final String MODIFIED = "modified";
     }
 
-    static interface BaseLauncherColumns extends ChangeLogColumns {
+    public static interface BaseLauncherColumns extends ChangeLogColumns {
         /**
          * Descriptive name of the gesture that can be displayed to the user.
          * <P>
@@ -119,11 +119,11 @@ public class LauncherSettings {
      *
      * Tracks the order of workspace screens.
      */
-    static final class WorkspaceScreens implements ChangeLogColumns {
+    public static final class WorkspaceScreens implements ChangeLogColumns {
         /**
          * The content:// style URL for this table
          */
-        static final Uri CONTENT_URI = Uri.parse("test");
+        public static final Uri CONTENT_URI = Uri.parse("test");
 
         /**
          * The rank of this screen -- ie. how it is ordered relative to the other screens.
@@ -131,28 +131,28 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String SCREEN_RANK = "screenRank";
+        public static final String SCREEN_RANK = "screenRank";
     }
 
     /**
      * Favorites.
      */
-    static final class Favorites implements BaseLauncherColumns {
+    public static final class Favorites implements BaseLauncherColumns {
         /**
          * The content:// style URL for this table
          */
-        static final Uri CONTENT_URI = null;
+        public static final Uri CONTENT_URI = null;
 
         /**
          * The content:// style URL for this table
          */
-        static final Uri OLD_CONTENT_URI = null;
+        public static final Uri OLD_CONTENT_URI = null;
 
         /**
          * The content:// style URL for this table. When this Uri is used, no notification is sent
          * if the content changes.
          */
-        static final Uri CONTENT_URI_NO_NOTIFICATION = null;
+        public static final Uri CONTENT_URI_NO_NOTIFICATION = null;
 
         /**
          * The content:// style URL for a given row, identified by its id.
@@ -162,7 +162,7 @@ public class LauncherSettings {
          *
          * @return The unique content URL for the specified row.
          */
-        static Uri getContentUri(long id, boolean notify) {
+        public static Uri getContentUri(long id, boolean notify) {
             return null;
         }
 
@@ -172,15 +172,15 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String CONTAINER = "container";
+        public static final String CONTAINER = "container";
 
         /**
          * The icon is a resource identified by a package name and an integer id.
          */
-        static final int CONTAINER_DESKTOP = -100;
-        static final int CONTAINER_HOTSEAT = -101;
+        public static final int CONTAINER_DESKTOP = -100;
+        public static final int CONTAINER_HOTSEAT = -101;
 
-        static final String containerToString(int container) {
+        public static final String containerToString(int container) {
             switch (container) {
                 case CONTAINER_DESKTOP:
                     return "desktop";
@@ -197,7 +197,7 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String SCREEN = "screen";
+        public static final String SCREEN = "screen";
 
         /**
          * The X coordinate of the cell holding the favorite (if container is CONTAINER_HOTSEAT or
@@ -206,7 +206,7 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String CELLX = "cellX";
+        public static final String CELLX = "cellX";
 
         /**
          * The Y coordinate of the cell holding the favorite (if container is CONTAINER_DESKTOP)
@@ -214,7 +214,7 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String CELLY = "cellY";
+        public static final String CELLY = "cellY";
 
         /**
          * The X span of the cell holding the favorite
@@ -222,7 +222,7 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String SPANX = "spanX";
+        public static final String SPANX = "spanX";
 
         /**
          * The Y span of the cell holding the favorite
@@ -230,7 +230,7 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String SPANY = "spanY";
+        public static final String SPANY = "spanY";
 
         /**
          * The profile id of the item in the cell.
@@ -238,12 +238,12 @@ public class LauncherSettings {
          * Type: INTEGER
          * </P>
          */
-        static final String PROFILE_ID = "profileId";
+        public static final String PROFILE_ID = "profileId";
 
         /**
          * The favorite is a user created folder
          */
-        static final int ITEM_TYPE_FOLDER = 2;
+        public static final int ITEM_TYPE_FOLDER = 2;
 
         /**
          * The favorite is a live folder

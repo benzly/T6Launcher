@@ -1,5 +1,7 @@
 package com.stv.launcher.widget;
 
+import java.lang.reflect.Field;
+
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -9,8 +11,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.Scroller;
 
 import com.stv.launcher.fragment.SpaceAdapter;
-
-import java.lang.reflect.Field;
 
 public class MetroViewPager extends ViewPager {
 
@@ -37,7 +37,6 @@ public class MetroViewPager extends ViewPager {
 
     @Override
     protected boolean canScroll(View v, boolean arg1, int arg2, int arg3, int arg4) {
-        /** 包有HorizontalScrollView时，优先HorizontalScrollView滚动 */
         if (v instanceof HorizontalScrollView) {
             return false;
         }

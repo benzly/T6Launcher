@@ -1,7 +1,6 @@
 package com.stv.launcher.fragment;
 
 import android.app.Fragment;
-import android.view.KeyEvent;
 
 public abstract class BaseFragment extends Fragment {
 
@@ -15,9 +14,5 @@ public abstract class BaseFragment extends Fragment {
     protected abstract boolean onFocusRequested(int requestDirection);
 
     protected abstract void onFragmentShowChanged(boolean gainShow);
-
-    public boolean priorityAccessKeyEvent(KeyEvent event) {
-        return false;
-    }
 
 }

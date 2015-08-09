@@ -1,17 +1,18 @@
 package com.stv.launcher.widget;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.widget.FrameLayout;
-
-import com.letv.launcher.ScreenInfo;
-import com.stv.launcher.fragment.BaseFragment;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import com.letv.launcher.ScreenInfo;
 
 public class MetroSpace extends FrameLayout {
 
@@ -46,22 +47,24 @@ public class MetroSpace extends FrameLayout {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        return super.dispatchKeyEvent(event);
-    }
-
-    public boolean priorityAccessKeyEvent(KeyEvent event) {
-        BaseFragment current = mViewPager.getAdapter().getCurrentFragment();
-        if (current != null) {
-            if (!current.priorityAccessKeyEvent(event)) {
-                int action = event.getAction();
+        boolean handled = super.dispatchKeyEvent(event);
+        if (!handled) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 int keyCode = event.getKeyCode();
-                if (action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                     mViewPager.getAdapter().getTabSpace().requestLastFocus();
-                    return true;
+                    handled = true;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    Toast.makeText(getContext(), "activity left", 0).show();
+                    handled = true;
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    Toast.makeText(getContext(), "activity right", 0).show();
+                    handled = true;
                 }
+                Log.d("xubin", "metro space "+handled);
             }
         }
-        return false;
+        return handled;
     }
 
     public static ArrayList<ScreenInfo> getDifference(ArrayList<ScreenInfo> old, ArrayList<ScreenInfo> cur) {

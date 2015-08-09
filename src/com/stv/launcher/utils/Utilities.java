@@ -1,5 +1,7 @@
 package com.stv.launcher.utils;
 
+import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,7 +13,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Rect;
@@ -20,8 +24,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.view.View;
-
-import java.util.ArrayList;
 
 
 /**
@@ -46,7 +48,7 @@ public final class Utilities {
     /**
      * Given a coordinate relative to the descendant, find the coordinate in a parent view's
      * coordinates.
-     *
+     * 
      * @param descendant The descendant to which the passed coordinate is relative.
      * @param root The root view to make the coordinates relative to.
      * @param coord The coordinate that we want mapped.
@@ -221,8 +223,7 @@ public final class Utilities {
         if (packageName != null) {
             try {
                 PackageInfo info = pm.getPackageInfo(packageName, 0);
-                return (info != null) && (info.applicationInfo != null)
-                        && ((info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
+                return (info != null) && (info.applicationInfo != null) && ((info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
             } catch (NameNotFoundException e) {
                 return false;
             }
@@ -233,5 +234,57 @@ public final class Utilities {
 
     public static void setIconSize(int widthPx) {
         sIconWidth = sIconHeight = widthPx;
+    }
+
+    /**
+     * 对图片进行压缩，主要是为了解决控件显示过大图片占用内存造成OOM问题,一般压缩后的图片大小应该和用来展示它的控件大小相近.
+     * 
+     * @param context 上下文
+     * @param resId 图片资源Id
+     * @param reqWidth 期望压缩的宽度
+     * @param reqHeight 期望压缩的高度
+     * @param realSize 是否按要求的宽高进行图片缩放
+     * @return 压缩后的图片
+     */
+    public static Bitmap compressBitmapFromResourse(Context context, int resId, int reqWidth, int reqHeight, boolean realSize) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        /*
+         * 第一次解析时，inJustDecodeBounds设置为true， 禁止为bitmap分配内存，虽然bitmap返回值为空，但可以获取图片大小
+         */
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(context.getResources(), resId, options);
+
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        final int density = options.inDensity;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        options.inSampleSize = inSampleSize;
+        // 使用计算得到的inSampleSize值再次解析图片
+        options.inJustDecodeBounds = false;
+        options.inDensity = (int) (context.getResources().getDisplayMetrics().density * 160);
+
+        Bitmap ret = BitmapFactory.decodeResource(context.getResources(), resId, options);
+        if (realSize && (width != reqWidth || height != reqHeight)) {
+            Bitmap newRet = zoomBitmap(ret, reqWidth, reqHeight);
+            return newRet;
+        } else {
+            return ret;
+        }
+    }
+
+    public static Bitmap zoomBitmap(Bitmap bitmap, int width, int height) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        Matrix matrix = new Matrix();
+        float scaleWidth = ((float) width / w);
+        float scaleHeight = ((float) height / h);
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap newbmp = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+        return newbmp;
     }
 }

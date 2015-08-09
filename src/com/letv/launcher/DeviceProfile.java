@@ -14,6 +14,8 @@
 
 package com.letv.launcher;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -23,9 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 
+import com.stv.launcher.activity.Launcher;
 import com.stv.launcher.widget.MetroViewPager;
-
-import java.util.ArrayList;
 
 
 class DeviceProfileQuery {
@@ -118,7 +119,7 @@ public class DeviceProfile {
 
     DeviceProfile(String n, float w, float h, float r, float c, float is, float its, float hs, float his, int dlId) {
         // Ensure that we have an odd number of hotseat items (since we need to place all apps)
-        if (!LauncherAppState.isDisableAllApps() && hs % 2 == 0) {
+        if (!LauncherState.isDisableAllApps() && hs % 2 == 0) {
             throw new RuntimeException("All Device Profiles must have an odd number of hotseat spaces");
         }
 

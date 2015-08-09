@@ -12,7 +12,11 @@
  * the License.
  */
 
-package com.letv.launcher;
+package com.stv.launcher.app;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,10 +28,6 @@ import com.stv.launcher.compat.LauncherActivityInfoCompat;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
 import com.stv.launcher.utils.IconCache;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Represents an app in AllAppsView.
@@ -48,7 +48,7 @@ public class AppInfo extends ItemInfo {
     /**
      * The time at which the app was first installed.
      */
-    long firstInstallTime;
+    public long firstInstallTime;
 
     public ComponentName componentName;
 
@@ -57,8 +57,8 @@ public class AppInfo extends ItemInfo {
 
     int flags = 0;
 
-    AppInfo() {
-        itemType = LauncherSettings.BaseLauncherColumns.ITEM_TYPE_SHORTCUT;
+    public AppInfo() {
+        itemType = AppSettings.BaseLauncherColumns.ITEM_TYPE_SHORTCUT;
     }
 
     public Intent getIntent() {
@@ -72,8 +72,7 @@ public class AppInfo extends ItemInfo {
     /**
      * Must not hold the Context.
      */
-    public AppInfo(Context context, LauncherActivityInfoCompat info, UserHandleCompat user, IconCache iconCache,
-            HashMap<Object, CharSequence> labelCache) {
+    public AppInfo(Context context, LauncherActivityInfoCompat info, UserHandleCompat user, IconCache iconCache, HashMap<Object, CharSequence> labelCache) {
         this.componentName = info.getComponentName();
         this.container = ItemInfo.NO_ID;
 
@@ -109,9 +108,9 @@ public class AppInfo extends ItemInfo {
 
     @Override
     public String toString() {
-        return "ApplicationInfo(title=" + title.toString() + " id=" + this.id + " type=" + this.itemType + " container=" + this.container
-                + " screen=" + screenId + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY + " dropPos="
-                + Arrays.toString(dropPos) + " user=" + user + ")";
+        return "ApplicationInfo(title=" + title.toString() + " id=" + this.id + " type=" + this.itemType + " container=" + this.container + " screen="
+                + screenId + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY + " dropPos=" + Arrays.toString(dropPos) + " user="
+                + user + ")";
     }
 
     public static void dumpApplicationInfoList(String tag, String label, ArrayList<AppInfo> list) {

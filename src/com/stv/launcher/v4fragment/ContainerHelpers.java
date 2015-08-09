@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.letv.launcher.v4fragment;
+package com.stv.launcher.v4fragment;
 
 class ContainerHelpers {
     static final int[] EMPTY_INTS = new int[0];

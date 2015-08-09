@@ -15,7 +15,7 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 
 import com.letv.launcher.R;
-import com.stv.launcher.utils.BitmapUtil;
+import com.stv.launcher.utils.Utilities;
 
 public class AppIconDrawer extends FocusProcessView {
     private static final String TAG = AppIconDrawer.class.getSimpleName();
@@ -60,9 +60,9 @@ public class AppIconDrawer extends FocusProcessView {
         mPaint = new Paint();
         mPath = new Path();
 
-        mBackground = BitmapUtil.compressBitmapFromResourse(getContext(), R.drawable.item_bg, w, h, true);
-        mIcon = BitmapUtil.compressBitmapFromResourse(getContext(), R.drawable.ic_home_sys_album, 140, 90, true);
-        mUninstallTag = BitmapUtil.compressBitmapFromResourse(getContext(), R.drawable.ic_home_app_deletefocus, w, h, true);
+        mBackground = Utilities.compressBitmapFromResourse(getContext(), R.drawable.item_bg, w, h, true);
+        mIcon = Utilities.compressBitmapFromResourse(getContext(), R.drawable.ic_home_sys_album, 140, 90, true);
+        mUninstallTag = Utilities.compressBitmapFromResourse(getContext(), R.drawable.ic_home_app_deletefocus, w, h, true);
 
         mBackgroundShader = new BitmapShader(mBackground, Shader.TileMode.MIRROR, Shader.TileMode.MIRROR);
         mBlurMaskFilter = new BlurMaskFilter(mShadowSize, BlurMaskFilter.Blur.NORMAL);

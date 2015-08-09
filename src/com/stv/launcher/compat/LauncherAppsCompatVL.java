@@ -14,6 +14,12 @@
 
 package com.stv.launcher.compat;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,12 +28,6 @@ import android.content.pm.LauncherApps;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.UserHandle;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class LauncherAppsCompatVL extends LauncherAppsCompat {
 

@@ -14,6 +14,9 @@
 
 package com.stv.launcher.compat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -29,9 +32,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Version of {@link LauncherAppsCompat} for devices with API level 16. Devices Pre-L don't support

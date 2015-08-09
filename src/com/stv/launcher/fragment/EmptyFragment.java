@@ -1,15 +1,15 @@
 package com.stv.launcher.fragment;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.letv.launcher.ItemInfo;
 import com.letv.launcher.R;
-
-import java.util.ArrayList;
+import com.stv.launcher.app.ItemInfo;
 
 public class EmptyFragment extends PagerFragment {
 

@@ -1,4 +1,6 @@
-package com.letv.launcher;
+package com.stv.launcher.activity;
+
+import java.util.ArrayList;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +9,14 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.letv.launcher.DeviceProfile;
+import com.letv.launcher.LauncherModel;
+import com.letv.launcher.LauncherState;
+import com.letv.launcher.R;
+import com.letv.launcher.ScreenInfo;
+import com.stv.launcher.app.AppInfo;
+import com.stv.launcher.app.ItemInfo;
+import com.stv.launcher.app.ShortcutInfo;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.fragment.EmptyFragment;
@@ -15,8 +25,6 @@ import com.stv.launcher.fragment.SearchFragment;
 import com.stv.launcher.fragment.SpaceAdapter;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.TabSpace;
-
-import java.util.ArrayList;
 
 public class Launcher extends FragmentActivity implements LauncherModel.Callbacks {
 
@@ -37,7 +45,7 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
 
-        LauncherAppState app = LauncherAppState.getInstance();
+        LauncherState app = LauncherState.getInstance();
         mLauncherModel = app.setLauncher(this);
 
         setupViews();
@@ -92,8 +100,13 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        boolean handled = mMetroSpace.priorityAccessKeyEvent(event);
-        return handled ? true : super.dispatchKeyEvent(event);
+        boolean handled = super.dispatchKeyEvent(event);
+        if (!handled) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                Log.d("xubin", "launcher");
+            }
+        }
+        return handled;
     }
 
     public void debug() {
@@ -144,8 +157,7 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
     }
 
     @Override
-    public void bindAppsAdded(ArrayList<Long> newScreens, ArrayList<ItemInfo> addNotAnimated, ArrayList<ItemInfo> addAnimated,
-            ArrayList<AppInfo> addedApps) {
+    public void bindAppsAdded(ArrayList<Long> newScreens, ArrayList<ItemInfo> addNotAnimated, ArrayList<ItemInfo> addAnimated, ArrayList<AppInfo> addedApps) {
 
     }
 

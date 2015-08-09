@@ -14,14 +14,14 @@
 
 package com.stv.launcher.compat;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class UserManagerCompatVL extends UserManagerCompatV17 {
     private final PackageManager mPm;

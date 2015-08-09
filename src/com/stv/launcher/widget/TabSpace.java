@@ -1,5 +1,8 @@
 package com.stv.launcher.widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -13,12 +16,9 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
-import com.letv.launcher.Launcher;
 import com.letv.launcher.R;
-import com.letv.launcher.ScreenManagerActivity;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.stv.launcher.activity.Launcher;
+import com.stv.launcher.activity.ScreenManagerActivity;
 
 public class TabSpace extends FrameLayout implements View.OnFocusChangeListener, View.OnClickListener {
     private static final String TAG = TabSpace.class.getSimpleName();
@@ -76,7 +76,7 @@ public class TabSpace extends FrameLayout implements View.OnFocusChangeListener,
         });
 
         LayoutParams btParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        btParams.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+        btParams.gravity = Gravity.RIGHT | Gravity.TOP;
         addView(mManagerBt, btParams);
     }
 

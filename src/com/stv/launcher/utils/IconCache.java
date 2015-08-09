@@ -14,6 +14,17 @@
 
 package com.stv.launcher.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -31,24 +42,13 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.letv.launcher.AppInfo;
 import com.letv.launcher.DeviceProfile;
-import com.letv.launcher.ShortcutInfo;
+import com.stv.launcher.app.AppInfo;
+import com.stv.launcher.app.ShortcutInfo;
 import com.stv.launcher.compat.LauncherActivityInfoCompat;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 /**
  * Cache of application icons. Icons can be made from any thread.
@@ -498,8 +498,7 @@ public class IconCache {
             return;
         }
         remove(componentName, user);
-        boolean success = mContext.deleteFile(getResourceFilename(componentName));
-        if (DEBUG && success) Log.d(TAG, "removed pre-loaded icon from persistent cache");
+        mContext.deleteFile(getResourceFilename(componentName));
     }
 
     private static String getResourceFilename(ComponentName component) {

@@ -14,10 +14,10 @@
 
 package com.stv.launcher.compat;
 
-import android.graphics.drawable.Drawable;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import android.graphics.drawable.Drawable;
 
 public class UserManagerCompatV16 extends UserManagerCompat {
 

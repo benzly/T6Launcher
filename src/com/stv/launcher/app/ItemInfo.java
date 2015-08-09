@@ -12,7 +12,11 @@
  * the License.
  */
 
-package com.letv.launcher;
+package com.stv.launcher.app;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,13 +24,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.letv.launcher.LauncherModel;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
 import com.stv.launcher.widget.MetroSpace;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Represents an item in the launcher.
@@ -36,9 +37,9 @@ public class ItemInfo {
     /**
      * Intent extra to store the profile. Format: UserHandle
      */
-    static final String EXTRA_PROFILE = "profile";
+    public static final String EXTRA_PROFILE = "profile";
 
-    static final int NO_ID = -1;
+    public static final int NO_ID = -1;
 
     /**
      * The id in the settings database for this item
@@ -46,16 +47,16 @@ public class ItemInfo {
     public long id = NO_ID;
 
     /**
-     * One of {@link LauncherSettings.Favorites#ITEM_TYPE_APPLICATION},
-     * {@link LauncherSettings.Favorites#ITEM_TYPE_SHORTCUT},
-     * {@link LauncherSettings.Favorites#ITEM_TYPE_FOLDER}, or
-     * {@link LauncherSettings.Favorites#ITEM_TYPE_APPWIDGET}.
+     * One of {@link AppSettings.Favorites#ITEM_TYPE_APPLICATION},
+     * {@link AppSettings.Favorites#ITEM_TYPE_SHORTCUT},
+     * {@link AppSettings.Favorites#ITEM_TYPE_FOLDER}, or
+     * {@link AppSettings.Favorites#ITEM_TYPE_APPWIDGET}.
      */
     public int itemType;
 
     /**
      * The id of the container that holds this item. For the desktop, this will be
-     * {@link LauncherSettings.Favorites#CONTAINER_DESKTOP}. For the all applications folder it will
+     * {@link AppSettings.Favorites#CONTAINER_DESKTOP}. For the all applications folder it will
      * be {@link #NO_ID} (since it is not stored in the settings DB). For user folders it will be
      * the id of the folder.
      */
@@ -114,15 +115,15 @@ public class ItemInfo {
     /**
      * The position of the item in a drag-and-drop operation.
      */
-    int[] dropPos = null;
+    public int[] dropPos = null;
 
     public UserHandleCompat user;
 
-    ItemInfo() {
+    public ItemInfo() {
         user = UserHandleCompat.myUserHandle();
     }
 
-    ItemInfo(ItemInfo info) {
+    public ItemInfo(ItemInfo info) {
         copyFrom(info);
         // tempdebug:
         LauncherModel.checkItemInfo(this);
@@ -152,16 +153,16 @@ public class ItemInfo {
      * @param values
      */
 
-    void onAddToDatabase(Context context, ContentValues values) {
-        values.put(LauncherSettings.BaseLauncherColumns.ITEM_TYPE, itemType);
-        values.put(LauncherSettings.Favorites.CONTAINER, container);
-        values.put(LauncherSettings.Favorites.SCREEN, screenId);
-        values.put(LauncherSettings.Favorites.CELLX, cellX);
-        values.put(LauncherSettings.Favorites.CELLY, cellY);
-        values.put(LauncherSettings.Favorites.SPANX, spanX);
-        values.put(LauncherSettings.Favorites.SPANY, spanY);
+    public void onAddToDatabase(Context context, ContentValues values) {
+        values.put(AppSettings.BaseLauncherColumns.ITEM_TYPE, itemType);
+        values.put(AppSettings.Favorites.CONTAINER, container);
+        values.put(AppSettings.Favorites.SCREEN, screenId);
+        values.put(AppSettings.Favorites.CELLX, cellX);
+        values.put(AppSettings.Favorites.CELLY, cellY);
+        values.put(AppSettings.Favorites.SPANX, spanX);
+        values.put(AppSettings.Favorites.SPANY, spanY);
         long serialNumber = UserManagerCompat.getInstance(context).getSerialNumberForUser(user);
-        values.put(LauncherSettings.Favorites.PROFILE_ID, serialNumber);
+        values.put(AppSettings.Favorites.PROFILE_ID, serialNumber);
 
         if (screenId == MetroSpace.EXTRA_EMPTY_SCREEN_ID) {
             // We should never persist an item on the extra empty screen.
@@ -169,12 +170,12 @@ public class ItemInfo {
         }
     }
 
-    void updateValuesWithCoordinates(ContentValues values, int cellX, int cellY) {
-        values.put(LauncherSettings.Favorites.CELLX, cellX);
-        values.put(LauncherSettings.Favorites.CELLY, cellY);
+    public void updateValuesWithCoordinates(ContentValues values, int cellX, int cellY) {
+        values.put(AppSettings.Favorites.CELLX, cellX);
+        values.put(AppSettings.Favorites.CELLY, cellY);
     }
 
-    static byte[] flattenBitmap(Bitmap bitmap) {
+    public static byte[] flattenBitmap(Bitmap bitmap) {
         // Try go guesstimate how much space the icon will take when serialized
         // to avoid unnecessary allocations/copies during the write.
         int size = bitmap.getWidth() * bitmap.getHeight() * 4;
@@ -190,10 +191,10 @@ public class ItemInfo {
         }
     }
 
-    static void writeBitmap(ContentValues values, Bitmap bitmap) {
+    public static void writeBitmap(ContentValues values, Bitmap bitmap) {
         if (bitmap != null) {
             byte[] data = flattenBitmap(bitmap);
-            values.put(LauncherSettings.Favorites.ICON, data);
+            values.put(AppSettings.Favorites.ICON, data);
         }
     }
 

@@ -14,6 +14,9 @@
 
 package com.stv.launcher.utils;
 
+import java.util.HashSet;
+import java.util.WeakHashMap;
+
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -22,9 +25,6 @@ import android.animation.ValueAnimator;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
-
-import java.util.HashSet;
-import java.util.WeakHashMap;
 
 public class LauncherAnimUtils {
     static WeakHashMap<Animator, Object> sAnimators = new WeakHashMap<Animator, Object>();

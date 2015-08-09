@@ -26,8 +26,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
+        <uses-library android:name="android.test.runner" />
+
         <activity
-            android:name="com.letv.launcher.Launcher"
+            android:name="com.stv.launcher.activity.Launcher"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
             <intent-filter>
@@ -37,14 +39,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.letv.launcher.ScreenManagerActivity"
+            android:name="com.stv.launcher.activity.ScreenManagerActivity"
             android:screenOrientation="landscape" >
         </activity>
 
         <service
             android:name="com.squareup.leakcanary.internal.HeapAnalyzerService"
             android:process=":leakcanary_jar" />
-        <service android:name="com.letv.launcher.HeapAnalysisResultService" >
+        <service android:name="com.stv.launcher.service.HeapAnalysisResultService" >
         </service>
 
         <provider
@@ -55,5 +57,11 @@
             android:writePermission="com.letv.launcher.permission.WRITE_SETTINGS" >
         </provider>
     </application>
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:label="launcher_test"
+        android:targetPackage="com.letv.launcher" >
+    </instrumentation>
 
 </manifest>

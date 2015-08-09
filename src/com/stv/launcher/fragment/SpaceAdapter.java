@@ -1,21 +1,23 @@
 package com.stv.launcher.fragment;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import com.letv.launcher.ItemInfo;
-import com.letv.launcher.v4fragment.FragmentStatePagerAdapter;
+import com.stv.launcher.app.ItemInfo;
+import com.stv.launcher.v4fragment.FragmentStatePagerAdapter;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.MetroViewPager;
 import com.stv.launcher.widget.TabSpace;
-
-import java.util.ArrayList;
 
 public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.OnTabChangedListener, ViewPager.OnPageChangeListener {
 
@@ -25,6 +27,7 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
     MetroSpace metroSpace;
     int mCurrentTab = -1;
     ArrayList<TabInfo> tabs = new ArrayList<SpaceAdapter.TabInfo>();
+    HashMap<String, BaseFragment> mFragmentCaches = new HashMap<String, BaseFragment>(5);
 
     private class TabInfo {
         String tag;
@@ -46,6 +49,8 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         this.tabSpace = tabSpace;
         this.metroSpace = metroSpace;
 
+        FragmentManager.enableDebugLogging(true);
+        
         MetroViewPager viewPager = metroSpace.getViewPager();
         viewPager.setAdapter(this);
         viewPager.setOffscreenPageLimit(1);
@@ -86,17 +91,11 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
     public void onPageSelected(int position) {
         final boolean pagerActive = metroSpace.getViewPager().hasFocus();
         final boolean switchLeft = mCurrentTab > position;
-        mCurrentTab = position;
         Log.d(TAG, "onPageSelected=" + position + "  pagerActive=" + pagerActive + "  switchLeft=" + switchLeft);
-
+        getCurrentFragment().onFragmentShowChanged(false);
+        mCurrentTab = position;
         final BaseFragment fragment = getCurrentFragment();
-        for (TabInfo item : tabs) {
-            if (item.fragment == fragment) {
-                item.fragment.onFragmentShowChanged(true);
-            } else {
-                item.fragment.onFragmentShowChanged(false);
-            }
-        }
+        fragment.onFragmentShowChanged(true);
         if (pagerActive) {
             fragment.onFocusRequested(switchLeft ? BaseFragment.FOCUS_RIGHT_IN : BaseFragment.FOCUS_LEFT_IN);
             tabSpace.setSelection(mCurrentTab);

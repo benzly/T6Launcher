@@ -12,15 +12,15 @@
  * the License.
  */
 
-package com.letv.launcher;
+package com.stv.launcher.app;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.content.ContentValues;
 import android.content.Context;
 
 import com.stv.launcher.compat.UserHandleCompat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Represents a folder containing shortcuts or apps.
@@ -35,18 +35,18 @@ public class FolderInfo extends ItemInfo {
     /**
      * The apps and shortcuts
      */
-    ArrayList<ShortcutInfo> contents = new ArrayList<ShortcutInfo>();
+    public ArrayList<ShortcutInfo> contents = new ArrayList<ShortcutInfo>();
 
     ArrayList<FolderListener> listeners = new ArrayList<FolderListener>();
 
-    FolderInfo() {
-        itemType = LauncherSettings.Favorites.ITEM_TYPE_FOLDER;
+    public FolderInfo() {
+        itemType = AppSettings.Favorites.ITEM_TYPE_FOLDER;
         user = UserHandleCompat.myUserHandle();
     }
 
     /**
      * Add an app or shortcut
-     *
+     * 
      * @param item
      */
     public void add(ShortcutInfo item) {
@@ -59,7 +59,7 @@ public class FolderInfo extends ItemInfo {
 
     /**
      * Remove an app or shortcut. Does not change the DB.
-     *
+     * 
      * @param item
      */
     public void remove(ShortcutInfo item) {
@@ -78,9 +78,9 @@ public class FolderInfo extends ItemInfo {
     }
 
     @Override
-    void onAddToDatabase(Context context, ContentValues values) {
+    public void onAddToDatabase(Context context, ContentValues values) {
         super.onAddToDatabase(context, values);
-        values.put(LauncherSettings.Favorites.TITLE, title.toString());
+        values.put(AppSettings.Favorites.TITLE, title.toString());
     }
 
     void addListener(FolderListener listener) {
@@ -117,7 +117,7 @@ public class FolderInfo extends ItemInfo {
 
     @Override
     public String toString() {
-        return "FolderInfo(id=" + this.id + " type=" + this.itemType + " container=" + this.container + " screen=" + screenId + " cellX="
-                + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY + " dropPos=" + Arrays.toString(dropPos) + ")";
+        return "FolderInfo(id=" + this.id + " type=" + this.itemType + " container=" + this.container + " screen=" + screenId + " cellX=" + cellX + " cellY="
+                + cellY + " spanX=" + spanX + " spanY=" + spanY + " dropPos=" + Arrays.toString(dropPos) + ")";
     }
 }

@@ -1,4 +1,6 @@
-package com.letv.launcher;
+package com.stv.launcher.activity;
+
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,9 +9,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.letv.launcher.R;
+import com.letv.launcher.ScreenInfo;
 import com.stv.launcher.widget.TabSpace;
-
-import java.util.ArrayList;
 
 public class ScreenManagerActivity extends Activity {
 
@@ -61,16 +63,7 @@ public class ScreenManagerActivity extends Activity {
                 if (info == null) {
                     String name = array[i];
                     log.add(name);
-                    LayoutType type = LayoutType.EMPTY;
-                    if (name.equals("视频") || name.equals("应用")) {
-                        type = LayoutType.MANUAL;
-                    } else if (name.equals("搜索")) {
-                        type = LayoutType.EMPTY;
-                    } else {
-                        type = LayoutType.AUTOMATIC;
-                    }
-                    info = new ScreenInfo(i, name, type);
-                    info.type = LayoutType.AUTOMATIC;
+                    info = new ScreenInfo(i, name);
                     sScrennDatas.add(info);
                     sBeAdded.add(info);
                 }

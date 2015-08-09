@@ -12,7 +12,10 @@
  * the License.
  */
 
-package com.letv.launcher;
+package com.stv.launcher.app;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -23,9 +26,6 @@ import android.util.Log;
 
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.utils.IconCache;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Represents a launchable icon on the workspaces and in folders.
@@ -60,13 +60,13 @@ public class ShortcutInfo extends ItemInfo {
     /**
      * The intent used to start the application.
      */
-    Intent intent;
+    public Intent intent;
 
     /**
      * Indicates whether the icon comes from an application's resource (if false) or from a custom
      * Bitmap (if true.)
      */
-    boolean customIcon;
+    public boolean customIcon;
 
     /**
      * Indicates whether we're using the default fallback icon instead of something from the app.
@@ -77,7 +77,7 @@ public class ShortcutInfo extends ItemInfo {
      * If isShortcut=true and customIcon=false, this contains a reference to the shortcut icon as an
      * application's resource.
      */
-    Intent.ShortcutIconResource iconResource;
+    public Intent.ShortcutIconResource iconResource;
 
     /**
      * The application icon.
@@ -98,9 +98,9 @@ public class ShortcutInfo extends ItemInfo {
      * Could be disabled, if the the app is installed but unavailable (eg. in safe mode or when
      * sd-card is not available).
      */
-    int isDisabled = DEFAULT;
+    public int isDisabled = DEFAULT;
 
-    int status;
+    public int status;
 
     /**
      * The installation progress [0-100] of the package that this shortcut represents.
@@ -110,22 +110,22 @@ public class ShortcutInfo extends ItemInfo {
     /**
      * Refer {@link AppInfo#firstInstallTime}.
      */
-    long firstInstallTime;
+    public long firstInstallTime;
 
     /**
      * TODO move this to {@link status}
      */
-    int flags = 0;
+    public int flags = 0;
 
     /**
      * If this shortcut is a placeholder, then intent will be a market intent for the package, and
      * this will hold the original intent from the database. Otherwise, null. Refer
      * {@link #FLAG_RESTORE_PENDING}, {@link #FLAG_INSTALL_PENDING}
      */
-    Intent promisedIntent;
+    public Intent promisedIntent;
 
-    ShortcutInfo() {
-        itemType = LauncherSettings.BaseLauncherColumns.ITEM_TYPE_SHORTCUT;
+    public ShortcutInfo() {
+        itemType = AppSettings.BaseLauncherColumns.ITEM_TYPE_SHORTCUT;
     }
 
     public Intent getIntent() {
@@ -185,35 +185,35 @@ public class ShortcutInfo extends ItemInfo {
     }
 
     @Override
-    void onAddToDatabase(Context context, ContentValues values) {
+    public void onAddToDatabase(Context context, ContentValues values) {
         super.onAddToDatabase(context, values);
 
         String titleStr = title != null ? title.toString() : null;
-        values.put(LauncherSettings.BaseLauncherColumns.TITLE, titleStr);
+        values.put(AppSettings.BaseLauncherColumns.TITLE, titleStr);
 
         String uri = promisedIntent != null ? promisedIntent.toUri(0) : (intent != null ? intent.toUri(0) : null);
-        values.put(LauncherSettings.BaseLauncherColumns.INTENT, uri);
+        values.put(AppSettings.BaseLauncherColumns.INTENT, uri);
 
         if (customIcon) {
-            values.put(LauncherSettings.BaseLauncherColumns.ICON_TYPE, LauncherSettings.BaseLauncherColumns.ICON_TYPE_BITMAP);
+            values.put(AppSettings.BaseLauncherColumns.ICON_TYPE, AppSettings.BaseLauncherColumns.ICON_TYPE_BITMAP);
             writeBitmap(values, mIcon);
         } else {
             if (!usingFallbackIcon) {
                 writeBitmap(values, mIcon);
             }
-            values.put(LauncherSettings.BaseLauncherColumns.ICON_TYPE, LauncherSettings.BaseLauncherColumns.ICON_TYPE_RESOURCE);
+            values.put(AppSettings.BaseLauncherColumns.ICON_TYPE, AppSettings.BaseLauncherColumns.ICON_TYPE_RESOURCE);
             if (iconResource != null) {
-                values.put(LauncherSettings.BaseLauncherColumns.ICON_PACKAGE, iconResource.packageName);
-                values.put(LauncherSettings.BaseLauncherColumns.ICON_RESOURCE, iconResource.resourceName);
+                values.put(AppSettings.BaseLauncherColumns.ICON_PACKAGE, iconResource.packageName);
+                values.put(AppSettings.BaseLauncherColumns.ICON_RESOURCE, iconResource.resourceName);
             }
         }
     }
 
     @Override
     public String toString() {
-        return "ShortcutInfo(title=" + title + "intent=" + intent + "id=" + this.id + " type=" + this.itemType + " container="
-                + this.container + " screen=" + screenId + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY
-                + " dropPos=" + Arrays.toString(dropPos) + " user=" + user + ")";
+        return "ShortcutInfo(title=" + title + "intent=" + intent + "id=" + this.id + " type=" + this.itemType + " container=" + this.container + " screen="
+                + screenId + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY + " dropPos=" + Arrays.toString(dropPos) + " user="
+                + user + ")";
     }
 
     public static void dumpShortcutInfoList(String tag, String label, ArrayList<ShortcutInfo> list) {

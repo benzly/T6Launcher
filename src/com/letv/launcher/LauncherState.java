@@ -1,5 +1,8 @@
 package com.letv.launcher;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
 import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -17,6 +20,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.stv.launcher.activity.Launcher;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.PackageInstallerCompat;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
@@ -27,11 +31,8 @@ import com.stv.launcher.utils.IconCache;
 import com.stv.launcher.utils.LauncherFiles;
 import com.stv.launcher.utils.Utilities;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-
-public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
-    private static final String TAG = LauncherAppState.class.getSimpleName();
+public class LauncherState implements DeviceProfile.DeviceProfileCallbacks {
+    private static final String TAG = LauncherState.class.getSimpleName();
     private static final boolean DEBUG = false;
 
     private final AppFilter mAppFilter;
@@ -45,18 +46,18 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
     private static WeakReference<LauncherProvider> sLauncherProvider;
     private static Context sContext;
 
-    private static LauncherAppState INSTANCE;
+    private static LauncherState INSTANCE;
 
     private DynamicGrid mDynamicGrid;
 
-    public static LauncherAppState getInstance() {
+    public static LauncherState getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new LauncherAppState();
+            INSTANCE = new LauncherState();
         }
         return INSTANCE;
     }
 
-    public static LauncherAppState getInstanceNoCreate() {
+    public static LauncherState getInstanceNoCreate() {
         return INSTANCE;
     }
 
@@ -71,7 +72,7 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
         sContext = context.getApplicationContext();
     }
 
-    private LauncherAppState() {
+    private LauncherState() {
         if (sContext == null) {
             throw new IllegalStateException("LauncherAppState inited before app context set");
         }
@@ -133,7 +134,7 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
         }
     };
 
-    LauncherModel setLauncher(Launcher launcher) {
+    public LauncherModel setLauncher(Launcher launcher) {
         mModel.initialize(launcher);
         return mModel;
     }
@@ -142,7 +143,7 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
         return mIconCache;
     }
 
-    LauncherModel getModel() {
+    public LauncherModel getModel() {
         return mModel;
     }
 
@@ -163,7 +164,7 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    DeviceProfile initDynamicGrid(Context context) {
+    public DeviceProfile initDynamicGrid(Context context) {
         mDynamicGrid = createDynamicGrid(context, mDynamicGrid);
         mDynamicGrid.getDeviceProfile().addCallback(this);
         return mDynamicGrid.getDeviceProfile();
@@ -186,8 +187,8 @@ public class LauncherAppState implements DeviceProfile.DeviceProfileCallbacks {
             display.getCurrentSizeRange(smallestSize, largestSize);
 
             dynamicGrid =
-                    new DynamicGrid(context, context.getResources(), Math.min(smallestSize.x, smallestSize.y), Math.min(largestSize.x,
-                            largestSize.y), realSize.x, realSize.y, dm.widthPixels, dm.heightPixels);
+                    new DynamicGrid(context, context.getResources(), Math.min(smallestSize.x, smallestSize.y), Math.min(largestSize.x, largestSize.y),
+                            realSize.x, realSize.y, dm.widthPixels, dm.heightPixels);
         }
 
         // Update the icon size

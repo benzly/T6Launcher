@@ -14,20 +14,20 @@
 
 package com.stv.launcher.compat;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.letv.launcher.LauncherAppState;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 import org.json.JSONTokener;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.letv.launcher.LauncherState;
 
 public class PackageInstallerCompatV16 extends PackageInstallerCompat {
 
@@ -76,7 +76,7 @@ public class PackageInstallerCompatV16 extends PackageInstallerCompat {
 
     private void replayUpdates() {
         if (DEBUG) Log.d(TAG, "updates resumed");
-        LauncherAppState app = LauncherAppState.getInstanceNoCreate();
+        LauncherState app = LauncherState.getInstanceNoCreate();
         if (app == null) {
             mReplayPending = true; // try again later
             if (DEBUG) Log.d(TAG, "app is null, delaying send");
@@ -119,7 +119,7 @@ public class PackageInstallerCompatV16 extends PackageInstallerCompat {
             if (mReplayPending) {
                 replayUpdates();
             } else if (state != STATUS_INSTALLED) {
-                LauncherAppState app = LauncherAppState.getInstanceNoCreate();
+                LauncherState app = LauncherState.getInstanceNoCreate();
                 ArrayList<PackageInstallInfo> update = new ArrayList<PackageInstallInfo>();
                 update.add(installInfo);
                 sendUpdate(app, update);
@@ -127,7 +127,7 @@ public class PackageInstallerCompatV16 extends PackageInstallerCompat {
         }
     }
 
-    private void sendUpdate(LauncherAppState app, ArrayList<PackageInstallInfo> updates) {
+    private void sendUpdate(LauncherState app, ArrayList<PackageInstallInfo> updates) {
         if (app == null) {
             mReplayPending = true; // try again later
             if (DEBUG) Log.d(TAG, "app is null, delaying send");

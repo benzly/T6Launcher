@@ -1,4 +1,4 @@
-package com.letv.launcher;
+package com.stv.launcher.service;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;

@@ -14,6 +14,8 @@
 
 package com.stv.launcher.compat;
 
+import java.util.List;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -24,8 +26,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 
 import com.stv.launcher.utils.Utilities;
-
-import java.util.List;
 
 public abstract class LauncherAppsCompat {
 

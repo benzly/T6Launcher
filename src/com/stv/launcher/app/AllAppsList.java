@@ -12,7 +12,10 @@
  * the License.
  */
 
-package com.letv.launcher;
+package com.stv.launcher.app;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,9 +25,6 @@ import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.utils.AppFilter;
 import com.stv.launcher.utils.IconCache;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -57,7 +57,7 @@ public class AllAppsList {
     /**
      * Add the supplied ApplicationInfo objects to the list, and enqueue it into the list to
      * broadcast when notify() is called.
-     *
+     * 
      * If the app is already in the list, doesn't add it.
      */
     public void add(AppInfo info) {
@@ -141,8 +141,7 @@ public class AllAppsList {
             // Find enabled activities and add them to the adapter
             // Also updates existing activities with new labels/icons
             for (final LauncherActivityInfoCompat info : matches) {
-                AppInfo applicationInfo =
-                        findApplicationInfoLocked(info.getComponentName().getPackageName(), user, info.getComponentName().getClassName());
+                AppInfo applicationInfo = findApplicationInfoLocked(info.getComponentName().getPackageName(), user, info.getComponentName().getClassName());
                 if (applicationInfo == null) {
                     add(new AppInfo(context, info, user, mIconCache, null));
                 } else {

@@ -1,17 +1,16 @@
 package com.stv.launcher.fragment;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.letv.launcher.ItemInfo;
-
-import java.util.ArrayList;
+import com.stv.launcher.app.ItemInfo;
 
 public abstract class PagerFragment extends BaseFragment {
 
-    /** create fragment view */
     protected abstract View onInflaterContent(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
 
     protected abstract void bindData(ArrayList<ItemInfo> items);
@@ -20,7 +19,7 @@ public abstract class PagerFragment extends BaseFragment {
 
     protected String tag;
 
-    protected View mContentView;
+    protected View mContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,19 +28,19 @@ public abstract class PagerFragment extends BaseFragment {
 
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mContentView == null) {
-            mContentView = onInflaterContent(inflater, container, savedInstanceState);
+        if (mContainer == null) {
+            mContainer = onInflaterContent(inflater, container, savedInstanceState);
         }
-        return mContentView;
+        return mContainer;
     }
 
     @Override
     public final void onDestroyView() {
         super.onDestroyView();
-        if (mContentView != null) {
-            ViewGroup parent = (ViewGroup) mContentView.getParent();
+        if (mContainer != null) {
+            ViewGroup parent = (ViewGroup) mContainer.getParent();
             if (parent != null) {
-                parent.removeView(mContentView);
+                parent.removeView(mContainer);
             }
         }
     }

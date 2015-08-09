@@ -12,12 +12,12 @@
  * the License.
  */
 
-package com.letv.launcher.v4fragment;
+package com.stv.launcher.v4fragment;
+
+import java.util.Map;
 
 import android.util.ArrayMap;
 import android.util.Log;
-
-import java.util.Map;
 
 /**
  * Base implementation of {@link ArrayMap} that doesn't include any standard Java container API
