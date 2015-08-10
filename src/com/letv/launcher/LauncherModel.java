@@ -1,20 +1,5 @@
 package com.letv.launcher;
 
-import java.lang.ref.WeakReference;
-import java.security.InvalidParameterException;
-import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -58,6 +43,10 @@ import com.stv.launcher.compat.PackageInstallerCompat;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
+import com.stv.launcher.db.ScreenInfo;
+import com.stv.launcher.fragment.EmptyFragment;
+import com.stv.launcher.fragment.LiveFragment;
+import com.stv.launcher.fragment.SearchFragment;
 import com.stv.launcher.receiver.InstallShortcutReceiver;
 import com.stv.launcher.receiver.StartupReceiver;
 import com.stv.launcher.utils.AppFilter;
@@ -65,6 +54,21 @@ import com.stv.launcher.utils.DeferredHandler;
 import com.stv.launcher.utils.IconCache;
 import com.stv.launcher.utils.Utilities;
 import com.stv.launcher.widget.MetroSpace;
+
+import java.lang.ref.WeakReference;
+import java.security.InvalidParameterException;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Maintains in-memory state of the Launcher. It is expected that there should be only one
@@ -254,8 +258,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     static boolean findNextAvailableIconSpaceInScreen(ArrayList<ItemInfo> items, int[] xy, long screen) {
         LauncherState app = LauncherState.getInstance();
         DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
-        final int xCount = (int) grid.numColumns;
-        final int yCount = (int) grid.numRows;
+        final int xCount = 0;// (int) grid.numColumns;
+        final int yCount = 0;// (int) grid.numRows;
         boolean[][] occupied = new boolean[xCount][yCount];
 
         int cellX, cellY, spanX, spanY;
@@ -442,8 +446,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                         }
 
                         // Add the shortcut to the db
-                        addItemToDatabase(context, shortcutInfo, AppSettings.Favorites.CONTAINER_DESKTOP, coords.first,
-                                coords.second[0], coords.second[1], false);
+                        addItemToDatabase(context, shortcutInfo, AppSettings.Favorites.CONTAINER_DESKTOP, coords.first, coords.second[0],
+                                coords.second[1], false);
                         // Save the ShortcutInfo for binding in the workspace
                         addedShortcutsFinal.add(shortcutInfo);
                     }
@@ -630,8 +634,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         synchronized (sBgLock) {
             checkItemInfoLocked(itemId, item, stackTrace);
 
-            if (item.container != AppSettings.Favorites.CONTAINER_DESKTOP
-                    && item.container != AppSettings.Favorites.CONTAINER_HOTSEAT) {
+            if (item.container != AppSettings.Favorites.CONTAINER_DESKTOP && item.container != AppSettings.Favorites.CONTAINER_HOTSEAT) {
                 // Item is in a folder, make sure this folder exists
                 if (!sBgFolders.containsKey(item.container)) {
                     // An items container is being set to a that of an item which is not in
@@ -767,10 +770,9 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         ArrayList<ItemInfo> items = new ArrayList<ItemInfo>();
         final ContentResolver cr = context.getContentResolver();
         Cursor c =
-                cr.query(AppSettings.Favorites.CONTENT_URI, new String[] {AppSettings.Favorites.ITEM_TYPE,
-                        AppSettings.Favorites.CONTAINER, AppSettings.Favorites.SCREEN, AppSettings.Favorites.CELLX,
-                        AppSettings.Favorites.CELLY, AppSettings.Favorites.SPANX, AppSettings.Favorites.SPANY,
-                        AppSettings.Favorites.PROFILE_ID}, null, null, null);
+                cr.query(AppSettings.Favorites.CONTENT_URI, new String[] {AppSettings.Favorites.ITEM_TYPE, AppSettings.Favorites.CONTAINER,
+                        AppSettings.Favorites.SCREEN, AppSettings.Favorites.CELLX, AppSettings.Favorites.CELLY,
+                        AppSettings.Favorites.SPANX, AppSettings.Favorites.SPANY, AppSettings.Favorites.PROFILE_ID}, null, null, null);
 
         final int itemTypeIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.ITEM_TYPE);
         final int containerIndex = c.getColumnIndexOrThrow(AppSettings.Favorites.CONTAINER);
@@ -813,8 +815,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
     FolderInfo getFolderById(Context context, HashMap<Long, FolderInfo> folderList, long id) {
         final ContentResolver cr = context.getContentResolver();
         Cursor c =
-                cr.query(AppSettings.Favorites.CONTENT_URI, null, "_id=? and (itemType=? or itemType=?)",
-                        new String[] {String.valueOf(id), String.valueOf(AppSettings.Favorites.ITEM_TYPE_FOLDER)}, null);
+                cr.query(AppSettings.Favorites.CONTENT_URI, null, "_id=? and (itemType=? or itemType=?)", new String[] {String.valueOf(id),
+                        String.valueOf(AppSettings.Favorites.ITEM_TYPE_FOLDER)}, null);
 
         try {
             if (c.moveToFirst()) {
@@ -1052,8 +1054,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                     sBgWorkspaceItems.remove(info);
                 }
 
-                cr.delete(AppSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, AppSettings.Favorites.CONTAINER + "=" + info.id,
-                        null);
+                cr.delete(AppSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, AppSettings.Favorites.CONTAINER + "=" + info.id, null);
                 // Lock on mBgLock *after* the db operation
                 synchronized (sBgLock) {
                     for (ItemInfo childInfo : info.contents) {
@@ -1267,13 +1268,10 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         ArrayList<ScreenInfo> orderedScreens = new ArrayList<ScreenInfo>();
 
         // TODO debug data
-        orderedScreens.add(new ScreenInfo(0, "轮播"));
-        orderedScreens.add(new ScreenInfo(0, "视频"));
-        orderedScreens.add(new ScreenInfo(1, "搜索"));
-        orderedScreens.add(new ScreenInfo(2, "应用"));
-        orderedScreens.add(new ScreenInfo(3, "发现"));
-        orderedScreens.add(new ScreenInfo(4, "汽车"));
-
+        orderedScreens.add(new ScreenInfo(0, "live", "轮播", LiveFragment.class.getName()));
+        orderedScreens.add(new ScreenInfo(1, "vod", "视频", EmptyFragment.class.getName()));
+        orderedScreens.add(new ScreenInfo(2, "search", "搜索", SearchFragment.class.getName()));
+        orderedScreens.add(new ScreenInfo(3, "app", "应用", EmptyFragment.class.getName()));
         return orderedScreens;
     }
 
@@ -1550,8 +1548,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         private boolean checkItemPlacement(HashMap<Long, ItemInfo[][]> occupied, ItemInfo item) {
             LauncherState app = LauncherState.getInstance();
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
-            final int countX = (int) grid.numColumns;
-            final int countY = (int) grid.numRows;
+            final int countX = 0;// (int) grid.numColumns;
+            final int countY = 0;// (int) grid.numRows;
 
             long containerIndex = item.screenId;
             if (item.container == AppSettings.Favorites.CONTAINER_HOTSEAT) {
@@ -1644,8 +1642,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
 
             LauncherState app = LauncherState.getInstance();
             DeviceProfile grid = app.getDynamicGrid().getDeviceProfile();
-            int countX = (int) grid.numColumns;
-            int countY = (int) grid.numRows;
+            int countX = 0;// (int) grid.numColumns;
+            int countY = 0;// (int) grid.numRows;
 
             if ((mFlags & LOADER_FLAG_CLEAR_WORKSPACE) != 0) {
                 LauncherState.getLauncherProvider().deleteDatabase();
@@ -1758,8 +1756,8 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
             Collections.sort(workspaceItems, new Comparator<ItemInfo>() {
                 @Override
                 public int compare(ItemInfo lhs, ItemInfo rhs) {
-                    int cellCountX = (int) grid.numColumns;
-                    int cellCountY = (int) grid.numRows;
+                    int cellCountX = 0;// (int) grid.numColumns;
+                    int cellCountY = 0;// (int) grid.numRows;
                     int screenOffset = cellCountX * cellCountY;
                     int containerOffset = screenOffset * (Launcher.SCREEN_COUNT + 1); // +1 hotseat
                     long lr = (lhs.container * containerOffset + lhs.screenId * screenOffset + lhs.cellY * cellCountX + lhs.cellX);
@@ -1949,7 +1947,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
                 final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                 if (callbacks != null) {
                     ArrayList<ItemInfo> ret = new ArrayList<ItemInfo>();
-                    callbacks.bindItems(screen.id, getDebugData(screen.name, ret));
+                    callbacks.bindItems(screen.getId(), getDebugData(screen.getName(), ret));
                 }
             }
         }

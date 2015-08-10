@@ -11,6 +11,7 @@ import android.widget.Button;
 
 public class FocusProcessButton extends Button {
 
+
     private AnimatorSet mAnimatorSet;
 
     private ScaleXUpdateListener mScaleXUpdateListener;
@@ -22,8 +23,8 @@ public class FocusProcessButton extends Button {
     private float mUnFocusScaleX = 1.0f;
     private float mUnFocusScaleY = 1.0f;
 
-    private float mFocusScaleX = 1.2f;
-    private float mFocusScaleY = 1.2f;
+    private float mFocusScaleX = 1.3f;
+    private float mFocusScaleY = 1.3f;
 
 
     public FocusProcessButton(Context context) {

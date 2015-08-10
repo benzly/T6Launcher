@@ -14,9 +14,6 @@
 
 package com.stv.launcher.compat;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import android.content.Context;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageInstaller.SessionCallback;
@@ -27,6 +24,9 @@ import android.util.SparseArray;
 
 import com.letv.launcher.LauncherState;
 import com.stv.launcher.utils.IconCache;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class PackageInstallerCompatVL extends PackageInstallerCompat implements Runnable {
 

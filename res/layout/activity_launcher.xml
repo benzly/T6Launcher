@@ -3,24 +3,22 @@
     android:id="@+id/activity_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="false" >
+    android:background="@drawable/launcher_background" >
 
     <FrameLayout
         android:id="@+id/live_content_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.stv.launcher.widget.TabSpace
-        android:id="@+id/tabspace"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/tabspace_height"
-        android:layout_marginTop="@dimen/tabspace_margin_top" />
-
     <com.stv.launcher.widget.MetroSpace
         android:id="@+id/metro_space"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tabspace" >
-    </com.stv.launcher.widget.MetroSpace>
+        android:layout_height="match_parent" />
+
+    <com.stv.launcher.widget.TabSpace
+        android:id="@+id/tabspace"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tabspace_layout_height"
+        android:layout_marginTop="@dimen/tabspace_layout_margin_top" />
 
 </RelativeLayout>

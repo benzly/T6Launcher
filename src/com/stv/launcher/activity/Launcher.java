@@ -1,7 +1,5 @@
 package com.stv.launcher.activity;
 
-import java.util.ArrayList;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,18 +11,18 @@ import com.letv.launcher.DeviceProfile;
 import com.letv.launcher.LauncherModel;
 import com.letv.launcher.LauncherState;
 import com.letv.launcher.R;
-import com.letv.launcher.ScreenInfo;
 import com.stv.launcher.app.AppInfo;
 import com.stv.launcher.app.ItemInfo;
 import com.stv.launcher.app.ShortcutInfo;
 import com.stv.launcher.compat.PackageInstallerCompat.PackageInstallInfo;
 import com.stv.launcher.compat.UserHandleCompat;
+import com.stv.launcher.db.ScreenInfo;
 import com.stv.launcher.fragment.EmptyFragment;
-import com.stv.launcher.fragment.LiveFragment;
-import com.stv.launcher.fragment.SearchFragment;
 import com.stv.launcher.fragment.SpaceAdapter;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.TabSpace;
+
+import java.util.ArrayList;
 
 public class Launcher extends FragmentActivity implements LauncherModel.Callbacks {
 
@@ -87,13 +85,13 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
             // need remove
             for (ScreenInfo info : ScreenManagerActivity.sBeRemoved) {
                 mScreens.remove(info);
-                mSpaceAdapter.removeTab(info.name);
+                mSpaceAdapter.removeTab(info.getName());
             }
 
             // need add
             for (ScreenInfo info : ScreenManagerActivity.sBeAdded) {
                 mScreens.add(info);
-                mSpaceAdapter.addTab(info.name, EmptyFragment.class, null);
+                mSpaceAdapter.addTab(info, null);
             }
         }
     }
@@ -124,15 +122,8 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
         if (orderedScreens != null) {
             mScreens.clear();
             mScreens.addAll(orderedScreens);
-
-            int i = 0;
             for (ScreenInfo screen : orderedScreens) {
-                if (i == 0) {
-                    mSpaceAdapter.addTab(screen.name, LiveFragment.class, null);
-                } else {
-                    mSpaceAdapter.addTab(screen.name, SearchFragment.class, null);
-                }
-                i++;
+                mSpaceAdapter.addTab(screen, null);
             }
             mTabSpace.setCurrentTab(1);
         }
@@ -157,7 +148,8 @@ public class Launcher extends FragmentActivity implements LauncherModel.Callback
     }
 
     @Override
-    public void bindAppsAdded(ArrayList<Long> newScreens, ArrayList<ItemInfo> addNotAnimated, ArrayList<ItemInfo> addAnimated, ArrayList<AppInfo> addedApps) {
+    public void bindAppsAdded(ArrayList<Long> newScreens, ArrayList<ItemInfo> addNotAnimated, ArrayList<ItemInfo> addAnimated,
+            ArrayList<AppInfo> addedApps) {
 
     }
 

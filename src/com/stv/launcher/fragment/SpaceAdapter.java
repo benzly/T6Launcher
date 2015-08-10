@@ -1,8 +1,5 @@
 package com.stv.launcher.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,10 +11,14 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import com.stv.launcher.app.ItemInfo;
+import com.stv.launcher.db.ScreenInfo;
 import com.stv.launcher.v4fragment.FragmentStatePagerAdapter;
 import com.stv.launcher.widget.MetroSpace;
 import com.stv.launcher.widget.MetroViewPager;
 import com.stv.launcher.widget.TabSpace;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.OnTabChangedListener, ViewPager.OnPageChangeListener {
 
@@ -30,16 +31,14 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
     HashMap<String, BaseFragment> mFragmentCaches = new HashMap<String, BaseFragment>(5);
 
     private class TabInfo {
-        String tag;
-        Class<?> clss;
+        ScreenInfo screen;
         Bundle args;
         BaseFragment fragment;
 
-        TabInfo(String tag, Class<?> _class, Bundle args) {
-            this.tag = tag;
-            this.clss = _class;
+        TabInfo(ScreenInfo screen, Bundle args) {
+            this.screen = screen;
             this.args = args;
-            this.fragment = (BaseFragment) Fragment.instantiate(context, clss.getName());
+            this.fragment = (BaseFragment) Fragment.instantiate(context, screen.getFragment_class());
         }
     }
 
@@ -50,7 +49,7 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         this.metroSpace = metroSpace;
 
         FragmentManager.enableDebugLogging(true);
-        
+
         MetroViewPager viewPager = metroSpace.getViewPager();
         viewPager.setAdapter(this);
         viewPager.setOffscreenPageLimit(1);
@@ -108,11 +107,11 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
     @Override
     public void onPageScrolled(int arg0, float arg1, int arg2) {}
 
-    public void addTab(String tabName, Class<?> clss, Bundle args) {
-        Log.d(TAG, "addTab " + tabName);
-        TabSpace.TabSpec tabSpec = tabSpace.newTabSpec(tabName);
+    public void addTab(ScreenInfo screen, Bundle args) {
+        Log.d(TAG, "addTab " + screen.getName());
+        TabSpace.TabSpec tabSpec = tabSpace.newTabSpec(screen.getName());
         String tag = tabSpec.getTag();
-        TabInfo info = new TabInfo(tag, clss, args);
+        TabInfo info = new TabInfo(screen, args);
         tabs.add(info);
         tabSpace.addTab(tabSpec);
         notifyDataSetChanged();
@@ -122,13 +121,13 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
         Log.d(TAG, "removeTab " + tabName);
         TabInfo beRmInfo = null;
         for (TabInfo info : tabs) {
-            if (info.tag.equals(tabName)) {
+            if (info.screen.getTag().equals(tabName)) {
                 beRmInfo = info;
                 break;
             }
         }
         if (beRmInfo != null) {
-            tabSpace.removeTab(beRmInfo.tag);
+            tabSpace.removeTab(beRmInfo.screen.getTag());
             tabs.remove(beRmInfo);
             beRmInfo = null;
             notifyDataSetChanged();
@@ -137,9 +136,7 @@ public class SpaceAdapter extends FragmentStatePagerAdapter implements TabSpace.
 
     public void bindTabItems(int tab, ArrayList<ItemInfo> items) {
         TabInfo tabInfo = tabs.get(tab);
-        if (tabInfo.fragment instanceof PagerFragment) {
-            ((PagerFragment) tabInfo.fragment).bindData(items);
-        }
+        if (tabInfo.fragment instanceof PagerFragment) {}
     }
 
     public void setCurrentTab(int tab) {

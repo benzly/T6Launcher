@@ -14,11 +14,11 @@
 
 package com.stv.launcher.compat;
 
-import java.util.HashSet;
-
 import android.content.Context;
 
 import com.stv.launcher.utils.Utilities;
+
+import java.util.HashSet;
 
 public abstract class PackageInstallerCompat {
 

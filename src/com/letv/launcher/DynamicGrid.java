@@ -1,11 +1,11 @@
 package com.letv.launcher;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+
+import java.util.ArrayList;
 
 
 public class DynamicGrid {
@@ -16,7 +16,6 @@ public class DynamicGrid {
     private float mMinWidth;
     private float mMinHeight;
 
-    // This is a static that we use for the default icon size on a 4/5-inch phone
     static float DEFAULT_ICON_SIZE_DP = 60;
     static float DEFAULT_ICON_SIZE_PX = 0;
 
@@ -48,10 +47,4 @@ public class DynamicGrid {
         return mProfile;
     }
 
-    public String toString() {
-        return "-------- DYNAMIC GRID ------- \n" + "Wd: " + mProfile.minWidthDps + ", Hd: " + mProfile.minHeightDps + ", W: " + mProfile.widthPx + ", H: "
-                + mProfile.heightPx + " [r: " + mProfile.numRows + ", c: " + mProfile.numColumns + ", is: " + mProfile.iconSizePx + ", its: "
-                + mProfile.iconTextSizePx + ", cw: " + mProfile.cellWidthPx + ", ch: " + mProfile.cellHeightPx + ", hc: " + mProfile.numHotseatIcons
-                + ", his: " + mProfile.hotseatIconSizePx + "]";
-    }
 }

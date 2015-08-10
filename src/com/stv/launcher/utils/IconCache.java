@@ -14,17 +14,6 @@
 
 package com.stv.launcher.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -49,6 +38,17 @@ import com.stv.launcher.compat.LauncherActivityInfoCompat;
 import com.stv.launcher.compat.LauncherAppsCompat;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 /**
  * Cache of application icons. Icons can be made from any thread.
@@ -213,7 +213,7 @@ public class IconCache {
         Iterator<Entry<CacheKey, CacheEntry>> it = mCache.entrySet().iterator();
         while (it.hasNext()) {
             final CacheEntry e = it.next().getValue();
-            if ((e.icon != null) && (e.icon.getWidth() < grid.iconSizePx || e.icon.getHeight() < grid.iconSizePx)) {
+            if ((e.icon != null) && (e.icon.getWidth() < grid.getIconPxSize() || e.icon.getHeight() < grid.getIconPxSize())) {
                 it.remove();
             }
         }

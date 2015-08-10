@@ -1,7 +1,5 @@
 package com.stv.launcher.provider;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.res.XmlResourceParser;
@@ -10,6 +8,8 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.letv.launcher.LauncherState;
+
+import org.xmlpull.v1.XmlPullParser;
 
 public class LauncherProvider extends ContentProvider {
     private static final String TAG = LauncherProvider.class.getSimpleName();

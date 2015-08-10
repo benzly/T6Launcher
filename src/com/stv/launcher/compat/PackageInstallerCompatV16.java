@@ -14,20 +14,20 @@
 
 package com.stv.launcher.compat;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONTokener;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.letv.launcher.LauncherState;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class PackageInstallerCompatV16 extends PackageInstallerCompat {
 

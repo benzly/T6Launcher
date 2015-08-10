@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Tabspace -->
-    <dimen name="tabspace_height">100dip</dimen>
-    <dimen name="tabspace_margin_top">50dip</dimen>
-    <dimen name="tabspace_padding_horizontal_edge">30dip</dimen>
+    <!-- TabSpace -->
+    <dimen name="tabspace_layout_height">60dip</dimen>
+    <dimen name="tabspace_layout_margin_top">77dip</dimen>
+    <dimen name="tabspace_item_margin">49dip</dimen>
+    <dimen name="tabspace_item_padding_top_edge">11dip</dimen>
+    <dimen name="tabspace_item_padding_bottom_edge">5dip</dimen>
+    <dimen name="tabspace_item_padding_horizontal_edge">107dip</dimen>
+    <dimen name="tabspace_item_normal_textsize">24sp</dimen>
+    <dimen name="tabspace_item_focus_textsize">40sp</dimen>
+
+    <!-- MetroSpace -->
+    <dimen name="metro_dynamic_grid_padding_top_edge">117dip</dimen>
+    <dimen name="metro_dynamic_grid_padding_horizontal_edge">107dip</dimen>
+    <dimen name="metro_dynamic_grid_padding_bottom_edge">0dip</dimen>
 
 </resources>

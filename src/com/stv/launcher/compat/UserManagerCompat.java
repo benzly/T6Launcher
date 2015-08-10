@@ -14,13 +14,13 @@
 
 package com.stv.launcher.compat;
 
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
 import com.stv.launcher.utils.Utilities;
+
+import java.util.List;
 
 public abstract class UserManagerCompat {
     protected UserManagerCompat() {}

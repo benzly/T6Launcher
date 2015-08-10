@@ -1,8 +1,5 @@
 package com.letv.launcher;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-
 import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -30,6 +27,9 @@ import com.stv.launcher.utils.BuildInfo;
 import com.stv.launcher.utils.IconCache;
 import com.stv.launcher.utils.LauncherFiles;
 import com.stv.launcher.utils.Utilities;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class LauncherState implements DeviceProfile.DeviceProfileCallbacks {
     private static final String TAG = LauncherState.class.getSimpleName();
@@ -187,8 +187,8 @@ public class LauncherState implements DeviceProfile.DeviceProfileCallbacks {
             display.getCurrentSizeRange(smallestSize, largestSize);
 
             dynamicGrid =
-                    new DynamicGrid(context, context.getResources(), Math.min(smallestSize.x, smallestSize.y), Math.min(largestSize.x, largestSize.y),
-                            realSize.x, realSize.y, dm.widthPixels, dm.heightPixels);
+                    new DynamicGrid(context, context.getResources(), Math.min(smallestSize.x, smallestSize.y), Math.min(largestSize.x,
+                            largestSize.y), realSize.x, realSize.y, dm.widthPixels, dm.heightPixels);
         }
 
         // Update the icon size

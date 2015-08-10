@@ -5,6 +5,6 @@
     <string name="hello_world">Hello world!</string>
 
     <!-- TabSpace -->
-    <string name="tab_manager_text">manger</string>
+    <string name="tab_manager_text">管理</string>
 
 </resources>

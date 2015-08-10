@@ -1,7 +1,5 @@
 package com.stv.launcher.utils;
 
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,6 +22,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.view.View;
+
+import java.util.ArrayList;
 
 
 /**
@@ -223,7 +223,8 @@ public final class Utilities {
         if (packageName != null) {
             try {
                 PackageInfo info = pm.getPackageInfo(packageName, 0);
-                return (info != null) && (info.applicationInfo != null) && ((info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
+                return (info != null) && (info.applicationInfo != null)
+                        && ((info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0);
             } catch (NameNotFoundException e) {
                 return false;
             }

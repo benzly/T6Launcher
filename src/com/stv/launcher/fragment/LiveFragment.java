@@ -1,7 +1,5 @@
 package com.stv.launcher.fragment;
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.letv.launcher.R;
-import com.stv.launcher.app.ItemInfo;
 
 public class LiveFragment extends PagerFragment {
 
@@ -20,16 +17,6 @@ public class LiveFragment extends PagerFragment {
         View content = inflater.inflate(R.layout.fragment_live, null);
         tv = (TextView) content.findViewById(R.id.tv);
         return content;
-    }
-
-    @Override
-    protected void bindData(ArrayList<ItemInfo> items) {
-
-    }
-
-    @Override
-    protected void release() {
-
     }
 
     @Override

@@ -14,10 +14,6 @@
 
 package com.stv.launcher.app;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +24,10 @@ import com.letv.launcher.LauncherModel;
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.compat.UserManagerCompat;
 import com.stv.launcher.widget.MetroSpace;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Represents an item in the launcher.
@@ -56,9 +56,9 @@ public class ItemInfo {
 
     /**
      * The id of the container that holds this item. For the desktop, this will be
-     * {@link AppSettings.Favorites#CONTAINER_DESKTOP}. For the all applications folder it will
-     * be {@link #NO_ID} (since it is not stored in the settings DB). For user folders it will be
-     * the id of the folder.
+     * {@link AppSettings.Favorites#CONTAINER_DESKTOP}. For the all applications folder it will be
+     * {@link #NO_ID} (since it is not stored in the settings DB). For user folders it will be the
+     * id of the folder.
      */
     public long container = NO_ID;
 

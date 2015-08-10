@@ -1,7 +1,5 @@
 package com.stv.launcher.activity;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.CheckBox;
@@ -10,8 +8,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.letv.launcher.R;
-import com.letv.launcher.ScreenInfo;
+import com.stv.launcher.db.ScreenInfo;
+import com.stv.launcher.fragment.EmptyFragment;
 import com.stv.launcher.widget.TabSpace;
+
+import java.util.ArrayList;
 
 public class ScreenManagerActivity extends Activity {
 
@@ -32,7 +33,7 @@ public class ScreenManagerActivity extends Activity {
             ((TextView) layout.findViewById(R.id.tv)).setText(array[i]);
             content.addView(layout);
             for (int j = 0; j < sScrennDatas.size(); j++) {
-                if (sScrennDatas.get(j).name.equals(array[i])) {
+                if (sScrennDatas.get(j).getName().equals(array[i])) {
                     ((CheckBox) layout.findViewById(R.id.box)).setChecked(true);
                     break;
                 }
@@ -42,7 +43,7 @@ public class ScreenManagerActivity extends Activity {
 
     public ScreenInfo getScreenInfo(String tag) {
         for (int j = 0; j < sScrennDatas.size(); j++) {
-            if (tag.equals(sScrennDatas.get(j).name)) {
+            if (tag.equals(sScrennDatas.get(j).getName())) {
                 return sScrennDatas.get(j);
             }
         }
@@ -63,7 +64,7 @@ public class ScreenManagerActivity extends Activity {
                 if (info == null) {
                     String name = array[i];
                     log.add(name);
-                    info = new ScreenInfo(i, name);
+                    info = new ScreenInfo(i, "", name, EmptyFragment.class.getName());
                     sScrennDatas.add(info);
                     sBeAdded.add(info);
                 }

@@ -1,10 +1,5 @@
 package com.stv.launcher.widget;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -12,7 +7,12 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.letv.launcher.ScreenInfo;
+import com.stv.launcher.db.ScreenInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MetroSpace extends FrameLayout {
 
@@ -61,7 +61,7 @@ public class MetroSpace extends FrameLayout {
                     Toast.makeText(getContext(), "activity right", 0).show();
                     handled = true;
                 }
-                Log.d("xubin", "metro space "+handled);
+                Log.d("xubin", "metro space " + handled);
             }
         }
         return handled;

@@ -1,25 +1,15 @@
 package com.stv.launcher.fragment;
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.letv.launcher.R;
-import com.stv.launcher.app.ItemInfo;
 
 public class EmptyFragment extends PagerFragment {
 
     private static final String TAG = EmptyFragment.class.getSimpleName();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate " + tag);
-    }
 
     @Override
     protected View onInflaterContent(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,25 +17,13 @@ public class EmptyFragment extends PagerFragment {
     }
 
     @Override
-    protected void bindData(ArrayList<ItemInfo> items) {
-
-    }
-
-    @Override
-    protected void release() {
-
-    }
-
-    @Override
-    public void onFragmentShowChanged(boolean gainShow) {
-        if (gainShow) {
-            Log.d(TAG, tag + " is show ------");
-        }
-    }
-
-    @Override
     protected boolean onFocusRequested(int requestDirection) {
         return false;
+    }
+
+    @Override
+    protected void onFragmentShowChanged(boolean gainShow) {
+
     }
 
 }

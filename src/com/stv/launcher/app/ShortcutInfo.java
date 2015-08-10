@@ -14,9 +14,6 @@
 
 package com.stv.launcher.app;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,6 +23,9 @@ import android.util.Log;
 
 import com.stv.launcher.compat.UserHandleCompat;
 import com.stv.launcher.utils.IconCache;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Represents a launchable icon on the workspaces and in folders.
@@ -211,9 +211,9 @@ public class ShortcutInfo extends ItemInfo {
 
     @Override
     public String toString() {
-        return "ShortcutInfo(title=" + title + "intent=" + intent + "id=" + this.id + " type=" + this.itemType + " container=" + this.container + " screen="
-                + screenId + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY + " dropPos=" + Arrays.toString(dropPos) + " user="
-                + user + ")";
+        return "ShortcutInfo(title=" + title + "intent=" + intent + "id=" + this.id + " type=" + this.itemType + " container="
+                + this.container + " screen=" + screenId + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY
+                + " dropPos=" + Arrays.toString(dropPos) + " user=" + user + ")";
     }
 
     public static void dumpShortcutInfoList(String tag, String label, ArrayList<ShortcutInfo> list) {
